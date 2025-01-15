@@ -16,6 +16,7 @@ $ cp .env.example .env
 3. Ensure contract tests are passing.
 
 ```bash
+$ sforge build
 $ sforge test
 ```
 

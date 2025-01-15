@@ -5,7 +5,7 @@ import {
     type ShieldedWalletClient,
 } from "seismic-viem";
 import { Abi, Address, Chain, http } from "viem";
-
+import { privateKeyToAccount } from "viem/accounts";
 import { getShieldedContractWithCheck } from "../lib/utils";
 
 interface AppConfig {
@@ -34,7 +34,7 @@ export class App {
         this.walletClient = await createShieldedWalletClient({
             chain: this.config.wallet.chain,
             transport: http(this.config.wallet.rpcUrl),
-            privateKey: this.config.wallet.privateKey as `0x${string}`,
+            account: privateKeyToAccount(this.config.wallet.privateKey as `0x${string}`),
         });
 
         this.contract = await getShieldedContractWithCheck(

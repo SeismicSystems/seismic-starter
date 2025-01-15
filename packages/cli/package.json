@@ -1,12 +1,13 @@
 {
     "name": "walnut-cli",
     "license": "MIT License",
+    "type": "module",
     "scripts": {
         "dev": "bun run src/index.ts"
     },
     "dependencies": {
         "dotenv": "^16.4.7",
-        "seismic-viem": "^1.0.5",
+        "seismic-viem": "1.0.6",
         "viem": "^2.22.3"
     },
     "devDependencies": {
