@@ -24,18 +24,18 @@ export default function WalnutGame() {
   };
 
   const buttonStyle = {
-    padding: '12px 24px',
+    padding: '16px 32px',
     margin: '0 15px',
-    fontSize: '16px',
+    fontSize: '18px',
     borderRadius: '8px',
     cursor: 'pointer',
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-amber-50 p-8">
-      <h1 className="text-5xl font-bold mb-10 text-brown-600">Walnut Cracker</h1>
+      <h1 className="text-5xl font-bold mb-10 text-brown-600 text-center">Walnut Cracker</h1>
       
-      <div className="mb-10">
+      <div className="mb-10 flex justify-center">
         <ConnectButton />
       </div>
 

@@ -26,8 +26,8 @@ export default function Walnut({ isCracked, isShaking, isHitting }: WalnutProps)
 
   return (
     <motion.svg
-      width="200"
-      height="200"
+      width="400"
+      height="400"
       viewBox="0 0 200 200"
       animate={controls}
     >
