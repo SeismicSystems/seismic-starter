@@ -9,9 +9,10 @@ import {
   anvil,
 } from 'wagmi/chains';
 import { createShieldedPublicClient } from 'seismic-viem';
+import { useSendTransaction } from 'wagmi';
 
 const seismicDevnet = {
-  id: 1337,
+  id: 31337,
   name: 'Seismic',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
@@ -30,7 +31,7 @@ const seismicDevnet = {
 
 
 export const config = getDefaultConfig({
-  appName: 'RainbowKit App',
+  appName: 'Walnut App',
   projectId: 'YOUR_PROJECT_ID',
   chains: [
     mainnet,

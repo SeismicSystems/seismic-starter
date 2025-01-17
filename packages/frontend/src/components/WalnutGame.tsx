@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useWalnutGame } from '../hooks/useWalnutGame';
 import Walnut from './Walnut';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useSendTransaction } from 'wagmi';
 
 export default function WalnutGame() {
   const { hits, secretNumber, isCracked, shake, hit, reset } = useWalnutGame();
