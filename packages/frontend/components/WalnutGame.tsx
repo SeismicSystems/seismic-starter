@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useWalnutGame } from '../hooks/useWalnutGame';
 import Walnut from './Walnut';
-import WalletConnect from './WalletConnect';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export default function WalnutGame() {
   const { hits, secretNumber, isCracked, shake, hit, reset } = useWalnutGame();
@@ -28,7 +28,7 @@ export default function WalnutGame() {
       <h1 className="text-4xl font-bold mb-8 text-brown-600">Walnut Cracker</h1>
       
       <div className="mb-8">
-        <WalletConnect />
+        <ConnectButton />
       </div>
 
       <div className="mb-8 text-center">
