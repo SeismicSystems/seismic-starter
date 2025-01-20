@@ -9,6 +9,7 @@ import {
   shieldedWriteContract,
   seismicDevnet
 } from 'seismic-viem'
+import { useAccount, useConnectorClient } from "wagmi";
 
 export type UseShieldedWriteContractConfig<
   TAbi extends Abi | readonly unknown[],
@@ -21,7 +22,7 @@ export type UseShieldedWriteContractConfig<
   abi: TAbi
   functionName: TFunctionName
   chain?: TChain
-  transport?: TTransport
+  transport: TTransport
   args?: readonly unknown[]
   // Optional overrides for the transaction
   overrides?: {
@@ -49,6 +50,7 @@ export function useShieldedWriteContract<
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const [hash, setHash] = useState<`0x${string}` | null>(null)
+  const extractedWalletClient = useConnectorClient()
 
   // Store the shielded client instances
   const [shieldedClients, setShieldedClients] = useState<{
@@ -63,10 +65,13 @@ export function useShieldedWriteContract<
   useEffect(() => {
     const initShieldedClients = async () => {
       try {
-        // Initialize the shielded wallet client
+        const account = extractedWalletClient.data?.account
+        if (!account) throw new Error('No account connected')
+
         const walletClient = await createShieldedWalletClient({
           chain,
-          transport: transport || window.ethereum,
+          transport,
+          account  // Use the checked account directly
         })
 
         // Initialize the shielded public client
