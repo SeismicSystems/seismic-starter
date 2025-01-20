@@ -15,6 +15,7 @@ const seismicDevnet = {
   id: 31337,
   name: 'Seismic',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  iconUrl: 'https://seismic-public-assets.s3.us-east-1.amazonaws.com/seismic-logo-light.png',
   rpcUrls: {
     default: { http: ['http://127.0.0.1:8545'] },
   },
