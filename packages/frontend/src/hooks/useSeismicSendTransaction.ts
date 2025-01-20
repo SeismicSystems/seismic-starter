@@ -1,7 +1,7 @@
 import { getSeismicClients, ShieldedPublicClient, type GetSeismicClientsParameters } from "seismic-viem";
 
 import { useCallback, useEffect, useState } from 'react'
-import { type Abi, type Chain, type Account, type Transport, type ContractFunctionName } from 'viem'
+import { type Abi, type Chain, type Account, type Transport, type ContractFunctionName, ContractFunctionArgs, WriteContractParameters, parseAbi } from 'viem'
 import { 
   createShieldedWalletClient, 
   createShieldedPublicClient,
@@ -12,32 +12,32 @@ import {
 import { useAccount, useConnectorClient } from "wagmi";
 
 export type UseShieldedWriteContractConfig<
+  TTransport extends Transport,
+  TChain extends Chain | undefined,
+  TAccount extends Account,
   TAbi extends Abi | readonly unknown[],
-  TFunctionName extends string,
-  TChain extends Chain,
-  TTransport extends Transport = Transport,
-  TAccount extends Account = Account
+  TFunctionName extends ContractFunctionName<TAbi, 'nonpayable' | 'payable'>,
+  TArgs extends ContractFunctionArgs<TAbi, 'nonpayable' | 'payable', TFunctionName>,
+  chainOverride extends Chain | undefined = undefined
 > = {
   address: `0x${string}`
   abi: TAbi
   functionName: TFunctionName
   chain?: TChain
   transport: TTransport
-  args?: readonly unknown[]
+  args?: TArgs
   // Optional overrides for the transaction
-  overrides?: {
-    gas?: bigint
-    maxFeePerGas?: bigint
-    maxPriorityFeePerGas?: bigint
-  }
+  overrides?: chainOverride
 }
 
 export function useShieldedWriteContract<
-  TAbi extends Abi | readonly unknown[],
-  TFunctionName extends ContractFunctionName<TAbi, "nonpayable" | "payable">,
-  TChain extends Chain,
-  TTransport extends Transport = Transport,
-  TAccount extends Account = Account
+  TTransport extends Transport,
+  TChain extends Chain | undefined,
+  TAccount extends Account,
+  const TAbi extends Abi | readonly unknown[],
+  TFunctionName extends ContractFunctionName<TAbi, 'nonpayable' | 'payable'>, 
+  TArgs extends ContractFunctionArgs<TAbi, 'nonpayable' | 'payable', TFunctionName>,
+  chainOverride extends Chain | undefined = undefined
 >({
   address,
   abi,
@@ -46,7 +46,7 @@ export function useShieldedWriteContract<
   transport,
   args,
   overrides
-}: UseShieldedWriteContractConfig<TAbi, TFunctionName, TChain, TTransport, TAccount>) {
+}: UseShieldedWriteContractConfig<TTransport, TChain, TAccount, TAbi, TFunctionName, TArgs, chainOverride>) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const [hash, setHash] = useState<`0x${string}` | null>(null)
@@ -106,6 +106,7 @@ export function useShieldedWriteContract<
         abi,
         functionName,
         args: args || [],
+        ...overrides
       })
       setHash(tx)
       return tx
@@ -122,7 +123,8 @@ export function useShieldedWriteContract<
     abi,
     functionName,
     args,
-    overrides
+    overrides,
+    chain
   ])
 
   // Function to simulate the transaction before executing
