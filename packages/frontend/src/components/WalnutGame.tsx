@@ -50,7 +50,11 @@ export default function WalnutGame() {
       </div>
 
       <div className="flex justify-center items-center mb-10">
-        <Walnut isCracked={isCracked} isShaking={isShaking} isHitting={isHitting} />
+        <Walnut 
+          isCracked={isCracked} 
+          isShakingAnimation={isShaking} 
+          isHittingAnimation={isHitting} 
+        />
         {isCracked && secretNumber !== null && (
           <motion.div
             initial={{ opacity: 0, scale: 0 }}

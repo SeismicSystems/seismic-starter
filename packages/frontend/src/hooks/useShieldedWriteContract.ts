@@ -1,7 +1,7 @@
 import { getSeismicClients, ShieldedPublicClient, type GetSeismicClientsParameters } from "seismic-viem";
 
 import { useCallback, useEffect, useState } from 'react'
-import { type Abi, type Chain, type Account, type Transport, type ContractFunctionName, ContractFunctionArgs, WriteContractParameters, parseAbi, custom } from 'viem'
+import { type Abi, type Chain, type Account, type Transport, type ContractFunctionName, ContractFunctionArgs, WriteContractParameters, parseAbi, custom, http } from 'viem'
 import { 
   createShieldedWalletClient, 
   createShieldedPublicClient,
@@ -50,26 +50,38 @@ export function useShieldedWriteContract<
   useEffect(() => {
     const initShieldedClients = async () => {
       try {
+        
         const account = extractedWalletClient.data?.account
         if (!account) throw new Error('No account connected')
-        
+        console.log('account', account)
+
         const transport = extractedWalletClient.data?.transport
         if (!transport) throw new Error('No transport connected')
-
+        console.log('transport', JSON.stringify(transport, null, 2))
         const chain = extractedWalletClient.data?.chain
         if (!chain) throw new Error('No chain connected')
+        console.log('chain', chain)
+
+        const publicClient = await createShieldedPublicClient({
+          transport: http(transport.url),
+          chain
+        })
+        console.log('publicClient get tee public key', await publicClient.getTeePublicKey())
 
         const walletClient = await createShieldedWalletClient({
           chain,
-          transport: custom(transport),
+          transport: http(transport.url),
           account
         })
 
+        console.log('walletClient', walletClient)
+
+        console.log('account is:', account)
+
         // Initialize the shielded public client
-        const publicClient = await createShieldedPublicClient({
-          transport: custom(transport),
-          chain
-        })
+        
+
+        console.log('publicClient get tee public key', await publicClient.getTeePublicKey())
 
         setShieldedClients({
           wallet: walletClient,
@@ -85,8 +97,10 @@ export function useShieldedWriteContract<
 
   // The write function that executes the shielded contract write
   const write = useCallback(async () => {
+    console.log('write', shieldedClients.wallet)
     if (!shieldedClients.wallet) {
-      throw new Error('Shielded wallet client not initialized');
+      console.log('shieldedClients.wallet', shieldedClients.wallet)
+      throw new Error('Shielded wallet client not initialized, the wallet is: ' + shieldedClients.wallet);
     }
   
     setIsLoading(true);
