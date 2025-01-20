@@ -15,7 +15,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "seismic-viem": "1.0.9",
-    "viem": "^2.21.50",
+    "viem": "^2.22.3",
     "wagmi": "^2.0.0"
   },
   "devDependencies": {
@@ -23,4 +23,5 @@
     "@types/react": "^19.0.6",
     "typescript": "5.5.2"
   }
+
 }

@@ -1,7 +1,7 @@
-import { getSeismicClients, type GetSeismicClientsParameters } from "seismic-viem";
+import { getSeismicClients, ShieldedPublicClient, type GetSeismicClientsParameters } from "seismic-viem";
 
 import { useCallback, useEffect, useState } from 'react'
-import { type Abi, type Chain, type Account, type Transport } from 'viem'
+import { type Abi, type Chain, type Account, type Transport, type ContractFunctionName } from 'viem'
 import { 
   createShieldedWalletClient, 
   createShieldedPublicClient,
@@ -34,7 +34,7 @@ export type UseShieldedWriteContractConfig<
 
 export function useShieldedWriteContract<
   TAbi extends Abi | readonly unknown[],
-  TFunctionName extends string,
+  TFunctionName extends ContractFunctionName<TAbi, "nonpayable" | "payable">,
   TChain extends Chain,
   TTransport extends Transport = Transport,
   TAccount extends Account = Account
@@ -55,7 +55,7 @@ export function useShieldedWriteContract<
   // Store the shielded client instances
   const [shieldedClients, setShieldedClients] = useState<{
     wallet: ShieldedWalletClient<TTransport, TChain, TAccount> | null
-    public: ReturnType<typeof createShieldedPublicClient> | null
+    public: ShieldedPublicClient<TTransport, TChain, undefined, undefined> | null
   }>({
     wallet: null,
     public: null  
@@ -71,13 +71,13 @@ export function useShieldedWriteContract<
         const walletClient = await createShieldedWalletClient({
           chain,
           transport,
-          account  // Use the checked account directly
+          account
         })
 
         // Initialize the shielded public client
-        const publicClient = createShieldedPublicClient({
-          chain,
-          transport: transport || window.ethereum,
+        const publicClient = await createShieldedPublicClient({
+          transport,
+          chain
         })
 
         setShieldedClients({
@@ -89,9 +89,7 @@ export function useShieldedWriteContract<
       }
     }
 
-    if (transport || window.ethereum) {
-      initShieldedClients()
-    }
+    initShieldedClients()
   }, [chain, transport])
 
   // The write function that executes the shielded contract write
@@ -108,7 +106,6 @@ export function useShieldedWriteContract<
         abi,
         functionName,
         args: args || [],
-        ...overrides
       })
       setHash(tx)
       return tx
