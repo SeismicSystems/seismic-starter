@@ -134,8 +134,8 @@ export function useShieldedWriteContract<
     }
 
     try {
-      // Simulate the transaction using the public client
-      const result = await shieldedClients.public.simulateContract({
+      // Simulate the transaction using the wallet client
+      const result = await shieldedClients.wallet.simulateContract({
         address,
         abi,
         functionName,
