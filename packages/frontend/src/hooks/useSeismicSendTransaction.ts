@@ -11,6 +11,14 @@ import {
 } from 'seismic-viem'
 import { useAccount, useConnectorClient } from "wagmi";
 
+type ShieldedWriteParameters<
+  TAbi extends Abi | readonly unknown[],
+  TFunctionName extends ContractFunctionName<TAbi, 'nonpayable' | 'payable'>,
+  TArgs extends ContractFunctionArgs<TAbi, 'nonpayable' | 'payable', TFunctionName>
+> = TArgs extends readonly []
+  ? Omit<WriteContractParameters<TAbi, TFunctionName, TArgs, any, any, any>, 'args'>
+  : WriteContractParameters<TAbi, TFunctionName, TArgs, any, any, any>;
+
 export type UseShieldedWriteContractConfig<
   TTransport extends Transport,
   TChain extends Chain | undefined,
@@ -95,70 +103,37 @@ export function useShieldedWriteContract<
   // The write function that executes the shielded contract write
   const write = useCallback(async () => {
     if (!shieldedClients.wallet) {
-      throw new Error('Shielded wallet client not initialized')
+      throw new Error('Shielded wallet client not initialized');
     }
-
-    setIsLoading(true)
-    setError(null)
+  
+    setIsLoading(true);
+    setError(null);
+  
     try {
-      const tx = await shieldedWriteContract(shieldedClients.wallet, {
-        address,
-        abi,
-        functionName,
-        args: args || [],
-        ...overrides
-      })
-      setHash(tx)
-      return tx
+      const tx = await shieldedWriteContract(
+        shieldedClients.wallet, 
+        {
+          address,
+          abi,
+          functionName,
+          ...(args && { args }),
+          chain,
+          ...overrides
+        } as any // Type assertion to any since we know the params are correct
+      );
+      setHash(tx);
+      return tx;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Error executing shielded write')
-      setError(error)
-      throw error
+      const error = err instanceof Error ? err : new Error('Error executing shielded write');
+      setError(error);
+      throw error;
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [
-    shieldedClients.wallet,
-    address,
-    abi,
-    functionName,
-    args,
-    overrides,
-    chain
-  ])
-
-  // Function to simulate the transaction before executing
-  const simulate = useCallback(async () => {
-    if (!shieldedClients.public) {
-      throw new Error('Shielded public client not initialized')
-    }
-
-    try {
-      // Simulate the transaction using the wallet client
-      const result = await shieldedClients.wallet.simulateContract({
-        address,
-        abi,
-        functionName,
-        args: args || [],
-        ...overrides
-      })
-      return result
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Error simulating transaction')
-      throw error
-    }
-  }, [
-    shieldedClients.public,
-    address,
-    abi,
-    functionName,
-    args,
-    overrides
-  ])
+  }, [shieldedClients.wallet, address, abi, functionName, args, overrides]);
 
   return {
     write,
-    simulate,
     isLoading,
     error,
     hash,
