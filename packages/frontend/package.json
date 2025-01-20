@@ -8,15 +8,15 @@
     "start": "next start"
   },
   "dependencies": {
-    "@rainbow-me/rainbowkit": "^2.2.2",
+    "@rainbow-me/rainbowkit": "^2.0.0",
     "@tanstack/react-query": "^5.55.3",
     "framer-motion": "^11.18.0",
     "next": "^15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "seismic-viem": "^1.0.9",
-    "viem": "2.21.55",
-    "wagmi": "^2.14.7"
+    "seismic-viem": "1.0.9",
+    "viem": "^2.21.50",
+    "wagmi": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.8",

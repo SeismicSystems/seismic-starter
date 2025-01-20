@@ -1,12 +1,7 @@
 import { getSeismicClients, type GetSeismicClientsParameters } from "seismic-viem";
 
 import { useCallback, useEffect, useState } from 'react'
-import { 
-  type Abi,
-  type Chain,
-  type Transport,
-  type Account 
-} from 'viem'
+import { type Abi, type Chain, type Account, type Transport } from 'viem'
 import { 
   createShieldedWalletClient, 
   createShieldedPublicClient,
@@ -18,12 +13,15 @@ import {
 export type UseShieldedWriteContractConfig<
   TAbi extends Abi | readonly unknown[],
   TFunctionName extends string,
-  TChain extends Chain
+  TChain extends Chain,
+  TTransport extends Transport = Transport,
+  TAccount extends Account = Account
 > = {
   address: `0x${string}`
   abi: TAbi
   functionName: TFunctionName
   chain?: TChain
+  transport?: TTransport
   args?: readonly unknown[]
   // Optional overrides for the transaction
   overrides?: {
@@ -36,27 +34,29 @@ export type UseShieldedWriteContractConfig<
 export function useShieldedWriteContract<
   TAbi extends Abi | readonly unknown[],
   TFunctionName extends string,
-  TChain extends Chain = typeof seismicDevnet,
+  TChain extends Chain,
+  TTransport extends Transport = Transport,
   TAccount extends Account = Account
 >({
   address,
   abi,
   functionName,
-  chain = seismicDevnet as TChain,
+  chain,
+  transport,
   args,
   overrides
-}: UseShieldedWriteContractConfig<TAbi, TFunctionName, TChain>) {
+}: UseShieldedWriteContractConfig<TAbi, TFunctionName, TChain, TTransport, TAccount>) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const [hash, setHash] = useState<`0x${string}` | null>(null)
 
   // Store the shielded client instances
   const [shieldedClients, setShieldedClients] = useState<{
-    wallet: ShieldedWalletClient<Transport, TChain, TAccount> | null
+    wallet: ShieldedWalletClient<TTransport, TChain, TAccount> | null
     public: ReturnType<typeof createShieldedPublicClient> | null
   }>({
     wallet: null,
-    public: null
+    public: null  
   })
 
   // Initialize shielded clients when a wallet is connected
@@ -66,17 +66,17 @@ export function useShieldedWriteContract<
         // Initialize the shielded wallet client
         const walletClient = await createShieldedWalletClient({
           chain,
-          transport: window.ethereum, // Using injected provider
+          transport: transport || window.ethereum,
         })
 
         // Initialize the shielded public client
         const publicClient = createShieldedPublicClient({
           chain,
-          transport: window.ethereum,
+          transport: transport || window.ethereum,
         })
 
         setShieldedClients({
-          wallet: walletClient as ShieldedWalletClient<Transport, TChain, TAccount>,
+          wallet: walletClient as ShieldedWalletClient<TTransport, TChain, TAccount>,
           public: publicClient
         })
       } catch (err) {
@@ -84,10 +84,10 @@ export function useShieldedWriteContract<
       }
     }
 
-    if (window.ethereum) {
+    if (transport || window.ethereum) {
       initShieldedClients()
     }
-  }, [chain])
+  }, [chain, transport])
 
   // The write function that executes the shielded contract write
   const write = useCallback(async () => {
