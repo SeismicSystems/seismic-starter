@@ -10,6 +10,8 @@ import {
   seismicDevnet
 } from 'seismic-viem'
 import { useAccount, useConnectorClient } from "wagmi";
+import { writeContract } from "wagmi/actions";
+import { config } from "../wagmi";
 
 export type UseShieldedWriteContractConfig<
   TAbi extends Abi | readonly unknown[],
@@ -107,8 +109,8 @@ export function useShieldedWriteContract<
     setError(null);
   
     try {
-      const tx = await shieldedWriteContract(
-        shieldedClients.wallet, 
+      const tx = await writeContract(config,
+        // shieldedClients.wallet, 
         {
           address,
           abi,
