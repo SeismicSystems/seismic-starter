@@ -59,14 +59,16 @@ async function main() {
         },
     });
     await app.init();
+    // await app.hit();
 
-    await app.reset();
-    await app.shake();
-    await app.shake();
-    await app.hit();
-    await app.shake();
-    await app.hit();
-    await app.look();
+
+    // await app.reset();
+    // await app.shake();
+    // await app.shake();
+    // await app.hit();
+    // await app.shake();
+    // await app.hit();
+    // await app.look();
 }
 
 main();

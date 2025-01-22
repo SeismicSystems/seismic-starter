@@ -42,6 +42,7 @@ export class App {
             this.config.contract.abi,
             this.config.contract.address,
         );
+        console.log("abi: ", JSON.stringify(this.config.contract.abi, null, 2));
     }
 
     async reset() {
