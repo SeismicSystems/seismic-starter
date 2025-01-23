@@ -164,7 +164,6 @@ export function useShieldedWriteContract<
     setError(null);
 
     const client = await getConnectorClient(config, {
-      account: walletAddress,
       chainId: 31337,
       // connector,
     })
