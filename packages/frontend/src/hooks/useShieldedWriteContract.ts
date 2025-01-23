@@ -1,7 +1,8 @@
-import { SnapRpcSender } from "@metamask/keyring-snap-client"
+
 import { getSeismicClients, ShieldedPublicClient, type GetSeismicClientsParameters } from "seismic-viem";
 import { useCallback, useEffect, useState } from 'react'
-import { type Abi, type Chain, type Account, type Transport, type ContractFunctionName, ContractFunctionArgs, WriteContractParameters, parseAbi, custom, http, TransactionRequest, AbiFunction, getAbiItem, toFunctionSelector, encodeAbiParameters, Hex, hexToBytes, bytesToHex } from 'viem'
+import { type Abi, type Chain, type Account, type Transport, type ContractFunctionName, ContractFunctionArgs, WriteContractParameters, parseAbi, custom, http, TransactionRequest, AbiFunction, getAbiItem, toFunctionSelector, encodeAbiParameters, Hex, hexToBytes, bytesToHex, Client } from 'viem'
+import { KeyringSnapRpcClient } from '@metamask/keyring-snap-client';
 import { 
   createShieldedWalletClient, 
   createShieldedPublicClient,
@@ -16,6 +17,26 @@ import { formatAbiItem } from "viem/utils";
 import { gcm } from '@noble/ciphers/webcrypto'
 import { prepareTransactionRequest } from "viem/actions";
 import { anvil } from "viem/chains";
+
+const SNAP_ID = "npm:@metamask/snap-simple-keyring-snap"
+
+const connectSnap = async (client: Client) => {
+  const connectedSnaps: {[snapId: string]: { blocked: boolean, enabled: boolean } } = await client.request({
+    method: "wallet_getSnaps"
+  })
+  console.log('connectedSnaps', JSON.stringify(connectedSnaps, null, 2))
+  
+  const keyringSnap = Object.entries(connectedSnaps).find(([snapId, snap]) => snapId === "npm:@metamask/snap-simple-keyring-snap")
+  if (!keyringSnap) {
+    const snaps = await client.request({
+      method: "wallet_requestSnaps",
+      params: {
+        [SNAP_ID]: {}
+      },
+    })
+    console.log('snaps', JSON.stringify(snaps, null, 2))
+  } 
+}
 
 export const stringifyBigInt = (_: any, v: any) =>
   typeof v === 'bigint' ? v.toString() : v
@@ -138,7 +159,7 @@ export function useShieldedWriteContract<
       // console.log('shieldedClients.wallet', shieldedClients.wallet)
       throw new Error('Shielded wallet client not initialized, the wallet is: ' + shieldedClients.wallet);
     }
-  
+
     setIsLoading(true);
     setError(null);
 
@@ -147,6 +168,10 @@ export function useShieldedWriteContract<
       chainId: 31337,
       // connector,
     })
+
+    // const isFlask = await client.request({ method: 'web3_clientVersion' })
+    // console.log('isFlask', isFlask)
+
 
     // console.log(JSON.stringify({ abi: abi, functionName, args }, null, 2))
     // @ts-ignore
@@ -162,7 +187,7 @@ export function useShieldedWriteContract<
     const aesKey = shieldedClients.wallet.getEncryption()
 
     // console.log(JSON.stringify({ client, walletAddress }, null, 2))
-    config.connectors
+    // config.connectors
 
     const nonce = await shieldedClients.wallet.getTransactionCount({
       address: walletAddress,
@@ -175,62 +200,69 @@ export function useShieldedWriteContract<
       to: address,
       data: seismicInput,
       gas: 30_000_000n,
-      gasPrice: undefined,
+      gasPrice: 2_121_033_093n,
       nonce: nonce!,
-      chain: undefined,
-      from: walletAddress,
+      chainId: 31337,
+      account: walletAddress,
     }
+
     const { type, ...preparedTx } = await prepareTransactionRequest(shieldedClients.wallet, { ...request, type: 'legacy' })
-    // console.log('preparedTx', preparedTx)
+    console.log('preparedTx', preparedTx)
     const toSign = { 
-      type: '0x4a',
+      // type: '0x4a',
       // encryptionPubkey: shieldedClients.wallet.getEncryptionPublicKey(),
       ...preparedTx,
+      type: 'legacy',
      }
+
+     const tx = await client.request({
+      method: "eth_sendTransaction",
+      params: [toSign]
+     })
+     console.log('tx', JSON.stringify(tx, null, 2))
+
+    // const keyringClient = new KeyringSnapRpcClient(SNAP_ID, window.ethereum)
+    // const accounts = await keyringClient.submitRequest({
+    //   id: "bf74af86-3fb2-4e64-95eb-52422bbbfe34",
+    //   request: {
+    //     method: "eth_signTransaction",
+    //     params: [toSign]
+    //   },
+    //   account: "29107aae-d491-4969-8538-a820afbedf13",
+    //   scope: "eip155:31337"
+    // })
+    // console.log(accounts)
 
     // console.log('toSign', JSON.stringify(toSign, stringifyBigInt, 2))
 
-    const connectedSnaps: {[snapId: string]: { blocked: boolean, enabled: boolean } } = await client.request({
-      method: "wallet_getSnaps"
-    })
-    console.log('connectedSnaps', JSON.stringify(connectedSnaps, null, 2))
-    
-    const keyringSnap = Object.entries(connectedSnaps).find(([snapId, snap]) => snapId === "npm:@metamask/snap-simple-keyring-snap")
-    if (!keyringSnap) {
-      const snaps = await client.request({
-        method: "wallet_requestSnaps",
-        params: {
-          "npm:@metamask/snap-simple-keyring-snap": {}
-        },
-      })
-      console.log('snaps', JSON.stringify(snaps, null, 2))
-    } 
     // else {
     //   console.log('keyringSnap', keyringSnap)
     // }
     // console.log('snaps', JSON.stringify(snaps, null, 2))
     // console.log('nonce', nonce)
 
-    const signedTx = await client.request({
-      method: 'keyring_submitRequest',
-      params: {
-        address: walletAddress,
-        id: "f84d3a97-b6e1-47ea-8b0c-fd8609efaad4",
-        // request: {
-        //   method: 'eth_signTransaction',
-        //   params: [toSign],
-        // },
-        "request": {
-          "method": "personal_sign",
-          "params": [
-            "0x4578616d706c652060706572736f6e616c5f7369676e60206d657373616765",
-            "0xe887f3b50232722e6eb4c1d3a03b34c9b345acd1"
-          ]
-        },
-        scope: "eip155:31337"
-      },
-    })
-    console.log('signedTx', signedTx)
+    // const signedTx = await client.request({
+    //   method: "wallet_invokeSnap",
+    //   params: {
+    //     snapId: SNAP_ID,
+    //     method: "eth_signTransaction",
+    //     params: [toSign]
+    //   }
+    // })
+    // console.log('signedTx', signedTx)
+
+    // const account = extractedWalletClient.data?.account
+    // if (!account) throw new Error('No account connected')
+
+    // console.log(JSON.stringify(account, null, 2))
+
+    // const signedTx = await account.signTransaction(toSign)
+
+    // const signedTx = await client.request({
+    //   method: "eth_signTransaction",
+    //   params: [toSign]
+    // })
+    // console.log('signedTx', signedTx)
     // try {
     //   const signedTx = await client.request({
     //     method: 'wallet_invokeSnap',
