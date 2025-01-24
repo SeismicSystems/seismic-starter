@@ -10,15 +10,60 @@ import {
   shieldedWriteContract,
   seismicDevnet
 } from 'seismic-viem'
-import { useAccount, useConnectorClient } from "wagmi";
-import { getConnectorClient, writeContract } from "wagmi/actions";
+import { Config, useAccount, useConnectorClient } from "wagmi";
+import { getConnectorClient, WriteContractReturnType } from "wagmi/actions";
 import { config } from "../wagmi";
-import { formatAbiItem } from "viem/utils";
+import { formatAbiItem, getAction } from "viem/utils";
 import { gcm } from '@noble/ciphers/webcrypto'
-import { prepareTransactionRequest } from "viem/actions";
+import { prepareTransactionRequest, sendTransaction, signTransaction } from "viem/actions";
 import { anvil } from "viem/chains";
+import {
+  type WriteContractErrorType as viem_WriteContractErrorType,
+  type WriteContractParameters as viem_WriteContractParameters,
+  type WriteContractReturnType as viem_WriteContractReturnType,
+} from 'viem/actions'
+import { writeContract as viem_writeContract } from './viemWriteContract'
+
 
 const SNAP_ID = "npm:@metamask/snap-simple-keyring-snap"
+
+
+export async function writeContract<
+  config extends Config,
+  const abi extends Abi | readonly unknown[],
+  functionName extends ContractFunctionName<abi, 'nonpayable' | 'payable'>,
+  args extends ContractFunctionArgs<
+    abi,
+    'nonpayable' | 'payable',
+    functionName
+  >,
+  chainId extends config['chains'][number]['id'],
+>(
+  config: config,
+  parameters: WriteContractParameters<abi, functionName, args, config, chainId>,
+): Promise<WriteContractReturnType> {
+  const { account, chainId, connector, ...request } = parameters
+
+  let client: Client
+  if (typeof account === 'object' && account?.type === 'local')
+    client = config.getClient({ chainId })
+  else
+    client = await getConnectorClient(config, {
+      account: account ?? undefined,
+      chainId,
+      connector,
+    })
+  console.log('calling write contract')
+  const action = getAction(client, viem_writeContract, 'writeContract')
+  const hash = await action({
+    ...(request as any),
+    ...(account ? { account } : {}),
+    chain: chainId ? { id: chainId } : null,
+  })
+
+  return hash
+}
+
 
 const connectSnap = async (client: Client) => {
   const connectedSnaps: {[snapId: string]: { blocked: boolean, enabled: boolean } } = await client.request({
@@ -109,6 +154,7 @@ export function useShieldedWriteContract<
 
   // Initialize shielded clients when a wallet is connected
   useEffect(() => {
+
     const initShieldedClients = async () => {
       try {
         
@@ -197,29 +243,75 @@ export function useShieldedWriteContract<
     const seismicInput = await encrypt(aesKey, plaintextCalldata, nonce)
     const request = {
       to: address,
-      data: seismicInput,
+      data: undefined,
       gas: 30_000_000n,
       gasPrice: 2_121_033_093n,
       nonce: nonce!,
       chainId: 31337,
-      account: walletAddress,
+      // account: walletAddress,
+      from: walletAddress,
     }
 
     const { type, ...preparedTx } = await prepareTransactionRequest(shieldedClients.wallet, { ...request, type: 'legacy' })
-    console.log('preparedTx', preparedTx)
-    const toSign = { 
+    // console.log('preparedTx', preparedTx)
+    const toSign = {
       // type: '0x4a',
       // encryptionPubkey: shieldedClients.wallet.getEncryptionPublicKey(),
       ...preparedTx,
-      type: 'legacy',
+      type: '0x4a',
+      data: '0x',
      }
+     console.log(JSON.stringify(toSign, stringifyBigInt, 2))
 
-     const tx = await client.request({
-      method: "eth_sendTransaction",
-      params: [toSign]
-     })
-     console.log('tx', JSON.stringify(tx, null, 2))
+    //  const tx = await client.request({
+    //   method: "eth_sendTransaction",
+    //   params: [toSign]
+    //  })
+    //  console.log('tx', JSON.stringify(tx, null, 2))
 
+    // const hash = await writeContract(config, { address, abi, functionName, args })
+    // console.log('hash', hash)
+
+    // console.log(client.chain)
+    const action = getAction(client, sendTransaction, 'sendTransaction')
+    // const tx = await action(toSign2)
+
+     const toSign2 = {
+        "data": "0x",
+        "from": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "gas": "0x1c9c380",
+        "gasPrice": "0x7e6c6585",
+        "nonce": "0x4",
+        "to": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "type": "0x4a"
+    }
+    const tx = await client.request({
+      method: 'eth_sendTransaction',
+      params: [toSign2],
+    })
+    console.log('tx', tx)
+    // console.log('tx', tx)
+    // const tx = await action(toSign)
+    // console.log('tx', tx)
+    // console.log(JSON.stringify(toSign, stringifyBigInt, 2))
+    // const action = getAction(client, signTransaction, 'signTransaction')
+    // const sig = await action(toSign)
+    // console.log('sig', sig)
+    // const txReq = {
+    //   "chain": null,
+    //   "data": "0x2ae3594a",
+    //   "to": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+    //   "account": {
+    //     "address": walletAddress,
+    //     "type": "json-rpc"
+    //   }
+    // }
+    // const tx = await client.request({
+    //   method: 'eth_sendTransaction',
+    //   params: [txReq]
+    // })
+    // const tx = await action(txReq)
+    // console.log('tx', tx)
     // const keyringClient = new KeyringSnapRpcClient(SNAP_ID, window.ethereum)
     // const accounts = await keyringClient.submitRequest({
     //   id: "bf74af86-3fb2-4e64-95eb-52422bbbfe34",

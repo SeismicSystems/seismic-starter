@@ -10,6 +10,7 @@ import {
 } from 'wagmi/chains';
 import { createShieldedPublicClient } from 'seismic-viem';
 import { useSendTransaction } from 'wagmi';
+import { formatTransactionRequest } from 'viem';
 
 const seismicDevnet = {
   id: 31337,
@@ -28,6 +29,15 @@ const seismicDevnet = {
       blockCreated: 1,
     },
   },
+  formatters: {
+    transactionRequest: {
+      format: (request) => {
+        const fmtReq = formatTransactionRequest(request)
+        console.log(JSON.stringify(fmtReq, null, 2))
+        return fmtReq
+      }
+    }
+  }
 } as const satisfies Chain;
 
 
