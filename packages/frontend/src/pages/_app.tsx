@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={client}>
         <RainbowKitProvider>
-          <ShieldedWalletProvider config={config} initialState={{}}>
+          <ShieldedWalletProvider config={config}>
             <Component {...pageProps} />
           </ShieldedWalletProvider>
         </RainbowKitProvider>
