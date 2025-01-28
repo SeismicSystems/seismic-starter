@@ -1,5 +1,4 @@
-import { parseAbi } from 'viem'
-import { useShieldedWriteContract } from './useShieldedWriteContract'
+import { useShieldedWriteContract } from 'seismic-react'
 
 const WALNUT_ABI = [
   {

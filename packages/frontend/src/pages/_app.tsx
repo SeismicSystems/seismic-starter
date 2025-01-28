@@ -6,7 +6,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
-import { config } from '../wagmi';
+import { config } from '../config';
+
+import { ShieldedWalletProvider } from 'seismic-react'
 
 const client = new QueryClient();
 
@@ -15,7 +17,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={client}>
         <RainbowKitProvider>
-          <Component {...pageProps} />
+          <ShieldedWalletProvider config={config} initialState={{}}>
+            <Component {...pageProps} />
+          </ShieldedWalletProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
