@@ -16,7 +16,6 @@ export function useWalnutGame() {
   }, []);
 
   const hit = useCallback(() => {
-    console.log('hit', hits)
     if (hits !== null && hits > 0) {
       setHits(prev => {
         if (prev !== null) {
