@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "target": "ESNext",
-        "resolveJsonModule": true,
-        "esModuleInterop": true,
-        "strict": true,
-        "paths": {
-            "seismic-viem": [
-                "./node_modules/seismic-client/packages/seismic-viem/src"
-            ]
-        }
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "paths": {
+      "seismic-viem": [
+        "./node_modules/seismic-client/packages/seismic-viem/src"
+      ]
     }
+  }
 }

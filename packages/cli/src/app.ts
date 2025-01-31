@@ -1,72 +1,100 @@
 import {
-    createShieldedWalletClient,
-    getShieldedContract,
-    type ShieldedContract,
-    type ShieldedWalletClient,
-} from "seismic-viem";
-import { Abi, Address, Chain, http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { getShieldedContractWithCheck } from "../lib/utils";
+  type ShieldedContract,
+  type ShieldedWalletClient,
+  createShieldedWalletClient,
+  getShieldedContract,
+  signedReadContract,
+} from 'seismic-viem'
+import { Abi, Address, Chain, http } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
+
+import { getShieldedContractWithCheck } from '../lib/utils'
 
 interface AppConfig {
-    wallet: {
-        chain: Chain;
-        rpcUrl: string;
-        privateKey: string;
-    };
-    contract: {
-        abi: Abi;
-        address: Address;
-    };
+  players: Array<{
+    name: string
+    privateKey: string
+  }>
+  wallet: {
+    chain: Chain
+    rpcUrl: string
+  }
+  contract: {
+    abi: Abi
+    address: Address
+  }
 }
 
 export class App {
-    private config: AppConfig;
+  private config: AppConfig
+  private playerClients: Map<string, ShieldedWalletClient> = new Map()
+  private playerContracts: Map<string, ShieldedContract> = new Map()
 
-    private contract!: ShieldedContract;
-    private walletClient!: ShieldedWalletClient;
+  constructor(config: AppConfig) {
+    this.config = config
+  }
 
-    constructor(config: AppConfig) {
-        this.config = config;
+  async init() {
+    for (const player of this.config.players) {
+      const walletClient = await createShieldedWalletClient({
+        chain: this.config.wallet.chain,
+        transport: http(this.config.wallet.rpcUrl),
+        account: privateKeyToAccount(player.privateKey as `0x${string}`),
+      })
+      this.playerClients.set(player.name, walletClient)
+
+      const contract = await getShieldedContractWithCheck(
+        walletClient,
+        this.config.contract.abi,
+        this.config.contract.address
+      )
+      this.playerContracts.set(player.name, contract)
     }
+    // console.log('playerContracts', this.playerContracts)
+  }
 
-    async init() {
-        this.walletClient = await createShieldedWalletClient({
-            chain: this.config.wallet.chain,
-            transport: http(this.config.wallet.rpcUrl),
-            account: privateKeyToAccount(this.config.wallet.privateKey as `0x${string}`),
-        });
-
-        this.contract = await getShieldedContractWithCheck(
-            this.walletClient,
-            this.config.contract.abi,
-            this.config.contract.address,
-        );
+  private getWalletClient(playerName: string): ShieldedWalletClient {
+    const client = this.playerClients.get(playerName)
+    if (!client) {
+      throw new Error(`Wallet client for player ${playerName} not found`)
     }
+    return client
+  }
 
-    async reset() {
-        console.log("- Writing reset()");
-        await this.walletClient.waitForTransactionReceipt({
-            hash: await this.contract.write.reset(),
-        });
+  private getPlayerContract(playerName: string): ShieldedContract {
+    const contract = this.playerContracts.get(playerName)
+    if (!contract) {
+      throw new Error(`Shielded contract for player ${playerName} not found`)
     }
+    return contract
+  }
 
-    async shake() {
-        console.log("- Writing shake()");
-        await this.walletClient.waitForTransactionReceipt({
-            hash: await this.contract.write.shake(),
-        });
-    }
+  async reset(playerName: string) {
+    console.log(`- Player ${playerName} writing reset()`)
+    const contract = this.getPlayerContract(playerName)
+    const walletClient = this.getWalletClient(playerName)
+    await contract.write.reset([], { gas: 100000n })
+  }
 
-    async hit() {
-        console.log("- Writing hit()");
-        await this.walletClient.waitForTransactionReceipt({
-            hash: await this.contract.write.hit(),
-        });
-    }
+  async shake(playerName: string, numShakes: number) {
+    console.log(`- Player ${playerName} writing shake()`)
+    const contract = this.getPlayerContract(playerName)
+    const walletClient = this.getWalletClient(playerName)
+    await contract.write.shake([numShakes], { gas: 50000n })
+  }
 
-    async look() {
-        const res = await this.contract.read.look();
-        console.log("- Reading look():", res);
-    }
+  async hit(playerName: string) {
+    console.log(`- Player ${playerName} writing hit()`)
+    const contract = this.getPlayerContract(playerName)
+    const walletClient = this.getWalletClient(playerName)
+    await contract.write.hit([], { gas: 100000n })
+  }
+
+  async look(playerName: string) {
+    console.log(`- Player ${playerName} reading look()`)
+    const contract = this.getPlayerContract(playerName)
+    // console.log('contract', contract)
+    const result = await contract.read.look()
+    console.log(`- Player ${playerName} sees number:`, result)
+  }
 }
