@@ -1,28 +1,35 @@
 'use client'
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import { useWalnutGame } from '../hooks/useWalnutGame';
 import Walnut from './Walnut';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useSendTransaction } from 'wagmi';
+import { useGetShellStrength, useReset, useWalnutHit as useHitContract, useWalnutShake as useShakeContract } from '../hooks/useWalnutContract';
 
 export default function WalnutGame() {
-  const { hits, secretNumber, isCracked, shake, hit, reset } = useWalnutGame();
-  const [isShaking, setIsShaking] = useState(false);
-  const [isHitting, setIsHitting] = useState(false);
+  // const { hits, secretNumber, isCracked, reset } = useWalnutGame();
+  const { write: hitContract, isLoading: isHitting } = useHitContract();
+  const { write: shakeContract, isLoading: isShaking } = useShakeContract();
+  const { write: resetContract, isLoading: isResetting } = useReset();
+  const { data: shellStrengthData } = useGetShellStrength();
+  const shellStrength = shellStrengthData as number | undefined;
 
-  const handleShake = () => {
-    setIsShaking(true);
-    shake();
-    setTimeout(() => setIsShaking(false), 500);
+  const handleShake = async () => {
+    try {
+      await shakeContract();
+    } catch (error) {
+      console.error('Error shaking walnut:', error);
+    }
   };
 
-  const handleHit = () => {
-    setIsHitting(true);
-    hit();
-    setTimeout(() => setIsHitting(false), 300);
+  const handleHit = async () => {
+    try {
+      await hitContract();
+    } catch (error) {
+      console.error('Error hitting walnut:', error);
+    }
   };
+
 
   const buttonStyle = {
     padding: '16px 32px',
@@ -42,66 +49,74 @@ export default function WalnutGame() {
 
       <div className="mb-10 text-center">
         <p className="text-2xl font-medium text-brown-600">
-          Hits Remaining: <span className="font-bold">{hits}</span>
+          Hits Remaining: <span className="font-bold">{shellStrength ?? 'Loading...'}</span>
         </p>
         <p className="text-2xl font-medium text-brown-600">
-          Secret Number: <span className="font-bold">{isCracked ? secretNumber : '???'}</span>
+          Secret Number: <span className="font-bold">{shellStrength === 0 ? 69: '???'}</span>
         </p>
       </div>
 
       <div className="flex justify-center items-center mb-10">
         <Walnut 
-          isCracked={isCracked} 
+          isCracked={shellStrength === 0} 
           isShakingAnimation={isShaking} 
           isHittingAnimation={isHitting} 
         />
-        {isCracked && secretNumber !== null && (
+        {shellStrength === 0 && (
           <motion.div
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
             className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl font-bold text-brown-800"
           >
-            {secretNumber}
+            🎉
           </motion.div>
         )}
-      </div>
-
-      <div className="w-80 bg-brown-200 rounded-full h-6 mb-10">
-        <div
-          className="bg-brown-600 rounded-full h-6 transition-all duration-300 ease-out"
-          style={{ width: `${((hits ?? 0) / 15) * 100}%` }}
-        />
       </div>
 
       <div className="flex space-x-6 mt-10">
         <button
           onClick={handleShake}
-          style={{ ...buttonStyle, backgroundColor: 'green', color: 'white' }}
+          disabled={isShaking}
+          style={{ 
+            ...buttonStyle, 
+            backgroundColor: isShaking ? '#90EE90' : 'green', 
+            color: 'white' 
+          }}
         >
-          Shake
+          {isShaking ? 'Shaking...' : 'Shake'}
         </button>
         <button
           onClick={handleHit}
-          style={{ ...buttonStyle, backgroundColor: 'red', color: 'white' }}
+          disabled={isHitting}
+          style={{ 
+            ...buttonStyle, 
+            backgroundColor: isHitting ? '#FFB6C1' : 'red', 
+            color: 'white' 
+          }}
         >
-          Hit
+          {isHitting ? 'Hitting...' : 'Hit'}
         </button>
         <button
-          onClick={reset}
+          onClick={resetContract}
           style={{ ...buttonStyle, backgroundColor: 'yellow', color: 'black' }}
         >
           Reset
         </button>
+        <button
+          onClick={() => shellStrength}
+          style={{ ...buttonStyle, backgroundColor: 'purple', color: 'white' }}
+        >
+          Get Shell Strength
+        </button>
       </div>
-
-      {isCracked && (
+      {shellStrength==0 && (
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mt-6 text-green-600 font-bold text-2xl"
         >
-          Cracked! The secret number is {secretNumber}
+          Cracked! 
         </motion.p>
       )}
     </div>

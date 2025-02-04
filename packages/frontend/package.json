@@ -14,8 +14,7 @@
     "next": "^15.1.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "seismic-viem": "1.0.11-alpha.experimental.3",
-    "seismic-react": "1.0.0-alpha.experimental.6",
+    "seismic-viem": "1.0.12",
     "viem": "^2.22.3",
     "wagmi": "^2.0.0"
   },
