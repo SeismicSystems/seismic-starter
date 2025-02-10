@@ -66,7 +66,7 @@ contract WalnutTest is Test {
         vm.expectRevert("SHELL_INTACT"); // Expect a revert when resetting an intact shell
         walnut.reset();
     }
-    
+
     function test_ManyActions() public {
         uint256 shakes = 0;
         for (uint256 i = 0; i < 50; i++) {
@@ -94,12 +94,12 @@ contract WalnutTest is Test {
         walnut.shake(suint256(3));
         walnut.hit();
 
-            // Expect the 'look' function to revert with "NOT_A_CONTRIBUTOR" error
+        // Expect the 'look' function to revert with "NOT_A_CONTRIBUTOR" error
         vm.prank(address(nonContributor));
         console.log(address(this));
         vm.expectRevert("NOT_A_CONTRIBUTOR");
         walnut.look();
-        assertEq(walnut.look(), 3);    
+        assertEq(walnut.look(), 3);
     }
 
     function test_ContributorInRound2() public {
@@ -132,6 +132,4 @@ contract WalnutTest is Test {
         vm.expectRevert("NOT_A_CONTRIBUTOR");
         walnut.look();
     }
-
 }
-

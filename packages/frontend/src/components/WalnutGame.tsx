@@ -11,10 +11,12 @@ export default function WalnutGame() {
   const { data: shellStrengthData } = useGetShellStrength()
   const shellStrength = shellStrengthData as number | undefined
 
-  // Add state for animations
+  // Add state for animations and look result
   const [isShaking, setIsShaking] = useState(false);
   const [isHitting, setIsHitting] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [isLooking, setIsLooking] = useState(false);
+  const [lookResult, setLookResult] = useState<string | null>(null);
 
   const handleShake = async () => {
     setIsShaking(true);
@@ -49,6 +51,21 @@ export default function WalnutGame() {
     }
   };
 
+  const handleLook = async () => {
+    setIsLooking(true);
+    try {
+      // Simple read call without transaction parameters
+      const result = await walnutContract?.read.look();
+      console.log('Look result:', result);
+      setLookResult(result ? result.toString() : null);
+    } catch (error) {
+      console.error('Error looking at walnut:', error);
+      setLookResult('Error: Please check your connection');
+    } finally {
+      setIsLooking(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-amber-50 p-8">
       <h1 className="text-5xl font-bold mb-10 text-brown-600 text-center">Walnut Cracker</h1>
@@ -64,6 +81,11 @@ export default function WalnutGame() {
         {shellStrength === 0 && (
           <p className="text-2xl font-medium text-brown-600">
             Secret Number: <span className="font-bold">69</span>
+          </p>
+        )}
+        {lookResult && (
+          <p className="text-2xl font-medium text-brown-600">
+            Look Result: <span className="font-bold">{lookResult}</span>
           </p>
         )}
       </div>
@@ -94,6 +116,12 @@ export default function WalnutGame() {
           className="px-8 py-4 bg-blue-500 text-white rounded-lg"
         >
           Reset
+        </button>
+        <button
+          onClick={handleLook}
+          className="px-8 py-4 bg-blue-500 text-white rounded-lg"
+        >
+          Look
         </button>
       </div>
     </div>
