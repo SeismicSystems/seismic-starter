@@ -1,6 +1,6 @@
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect } from 'react';
-import { useWalnutHit, useWalnutShake } from '../hooks/useWalnutContract'
+import { useGetWalnutContract, useWalnutHit, useWalnutShake } from '../hooks/useWalnutContract'
 
 interface WalnutProps {
   isCracked: boolean;
@@ -10,8 +10,7 @@ interface WalnutProps {
 
 export default function Walnut({ isCracked, isShakingAnimation, isHittingAnimation }: WalnutProps) {
   const controls = useAnimation();
-  const { write: hit, isLoading: isHitting } = useWalnutHit()
-  const { write: shake, isLoading: isShaking } = useWalnutShake()
+  const { contract: walnutContract } = useGetWalnutContract()
 
   useEffect(() => {
     if (isShakingAnimation) {
@@ -29,7 +28,7 @@ export default function Walnut({ isCracked, isShakingAnimation, isHittingAnimati
 
   const handleHit = async () => {
     try {
-      await hit()
+      await walnutContract?.write.hit([], { gas: 100000 })
     } catch (error) {
       console.error('Error hitting walnut:', error)
     }
@@ -37,9 +36,19 @@ export default function Walnut({ isCracked, isShakingAnimation, isHittingAnimati
 
   const handleShake = async () => {
     try {
-      await shake()
+      await walnutContract?.write.shake([1], { gas: 100000 })
     } catch (error) {
       console.error('Error shaking walnut:', error)
+    }
+  }
+
+
+  const handleLook = async () => {
+    try {
+      const result = await walnutContract?.read.look()
+      console.log('result', result)
+    } catch (error) {
+      console.error('Error looking at walnut:', error)
     }
   }
 

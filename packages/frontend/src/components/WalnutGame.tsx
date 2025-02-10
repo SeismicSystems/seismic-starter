@@ -1,42 +1,52 @@
 'use client'
 
 import { motion } from 'framer-motion';
-import { useWalnutGame } from '../hooks/useWalnutGame';
+import { useState } from 'react';
 import Walnut from './Walnut';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useGetShellStrength, useReset, useWalnutHit as useHitContract, useWalnutShake as useShakeContract } from '../hooks/useWalnutContract';
+import { useGetShellStrength, useGetWalnutContract } from '../hooks/useWalnutContract';
 
 export default function WalnutGame() {
-  // const { hits, secretNumber, isCracked, reset } = useWalnutGame();
-  const { write: hitContract, isLoading: isHitting } = useHitContract();
-  const { write: shakeContract, isLoading: isShaking } = useShakeContract();
-  const { write: resetContract, isLoading: isResetting } = useReset();
-  const { data: shellStrengthData } = useGetShellStrength();
-  const shellStrength = shellStrengthData as number | undefined;
+  const { contract: walnutContract } = useGetWalnutContract()
+  const { data: shellStrengthData } = useGetShellStrength()
+  const shellStrength = shellStrengthData as number | undefined
+
+  // Add state for animations
+  const [isShaking, setIsShaking] = useState(false);
+  const [isHitting, setIsHitting] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   const handleShake = async () => {
+    setIsShaking(true);
     try {
-      await shakeContract();
+      await walnutContract?.write.shake([1], { gas: 100000 })
     } catch (error) {
       console.error('Error shaking walnut:', error);
+    } finally {
+      setIsShaking(false);
     }
   };
 
   const handleHit = async () => {
+    setIsHitting(true);
     try {
-      await hitContract();
+      await walnutContract?.write.hit([], { gas: 100000 })
     } catch (error) {
       console.error('Error hitting walnut:', error);
+    } finally {
+      setIsHitting(false);
     }
   };
 
-
-  const buttonStyle = {
-    padding: '16px 32px',
-    margin: '0 15px',
-    fontSize: '18px',
-    borderRadius: '8px',
-    cursor: 'pointer',
+  const handleReset = async () => {
+    setIsResetting(true);
+    try {
+      await walnutContract?.write.reset([], { gas: 100000 })
+    } catch (error) {
+      console.error('Error resetting walnut:', error);
+    } finally {
+      setIsResetting(false);
+    }
   };
 
   return (
@@ -49,77 +59,43 @@ export default function WalnutGame() {
 
       <div className="mb-10 text-center">
         <p className="text-2xl font-medium text-brown-600">
-          Hits Remaining: <span className="font-bold">{shellStrength ?? 'Loading...'}</span>
+          Shell Strength: <span className="font-bold">{shellStrength ?? 'Loading...'}</span>
         </p>
-        <p className="text-2xl font-medium text-brown-600">
-          Secret Number: <span className="font-bold">{shellStrength === 0 ? 69: '???'}</span>
-        </p>
+        {shellStrength === 0 && (
+          <p className="text-2xl font-medium text-brown-600">
+            Secret Number: <span className="font-bold">69</span>
+          </p>
+        )}
       </div>
 
       <div className="flex justify-center items-center mb-10">
         <Walnut 
           isCracked={shellStrength === 0} 
-          isShakingAnimation={isShaking} 
-          isHittingAnimation={isHitting} 
+          isShakingAnimation={isShaking}
+          isHittingAnimation={isHitting}
         />
-        {shellStrength === 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl font-bold text-brown-800"
-          >
-            🎉
-          </motion.div>
-        )}
       </div>
 
-      <div className="flex space-x-6 mt-10">
+      <div className="flex space-x-6">
         <button
           onClick={handleShake}
-          disabled={isShaking}
-          style={{ 
-            ...buttonStyle, 
-            backgroundColor: isShaking ? '#90EE90' : 'green', 
-            color: 'white' 
-          }}
+          className="px-8 py-4 bg-green-500 text-white rounded-lg"
         >
-          {isShaking ? 'Shaking...' : 'Shake'}
+          Shake
         </button>
         <button
           onClick={handleHit}
-          disabled={isHitting}
-          style={{ 
-            ...buttonStyle, 
-            backgroundColor: isHitting ? '#FFB6C1' : 'red', 
-            color: 'white' 
-          }}
+          className="px-8 py-4 bg-red-500 text-white rounded-lg"
         >
-          {isHitting ? 'Hitting...' : 'Hit'}
+          Hit
         </button>
         <button
-          onClick={resetContract}
-          style={{ ...buttonStyle, backgroundColor: 'yellow', color: 'black' }}
+          onClick={handleReset}
+          className="px-8 py-4 bg-blue-500 text-white rounded-lg"
         >
           Reset
         </button>
-        <button
-          onClick={() => shellStrength}
-          style={{ ...buttonStyle, backgroundColor: 'purple', color: 'white' }}
-        >
-          Get Shell Strength
-        </button>
       </div>
-      {shellStrength==0 && (
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-6 text-green-600 font-bold text-2xl"
-        >
-          Cracked! 
-        </motion.p>
-      )}
     </div>
   );
 }
-
