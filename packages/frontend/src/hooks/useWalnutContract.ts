@@ -1,4 +1,4 @@
-import { useShieldedContract, useShieldedWriteContract } from 'seismic-react'
+import { useShieldedContract, useShieldedWriteContract, useSignedReadContract } from 'seismic-react'
 import { useReadContract } from 'wagmi';
 import walnutJson from '../../../contracts/out/Walnut.sol/Walnut.json';
 import { useState, useEffect } from 'react';
@@ -16,26 +16,20 @@ export function useGetWalnutContract() {
 }
 
 export function useWalnutHit() {
-  return useShieldedContract({
+  return useShieldedWriteContract({
     address: WALNUT_ADDRESS,
     abi: WALNUT_ABI,
+    functionName: 'hit'
   })
-  // return useShieldedWriteContract({
-  //   address: WALNUT_ADDRESS,
-  //   abi: WALNUT_ABI,
-  //   functionName: 'hit',
-  //   gas: 100000,
-  // })
 }
 
 export function useWalnutShake() {
-  // return useShieldedWriteContract({
-  //   address: WALNUT_ADDRESS,
-  //   abi: WALNUT_ABI,
-  //   functionName: 'shake',
-  //   args: [1],
-
-  // })
+  return useShieldedWriteContract({
+    address: WALNUT_ADDRESS,
+    abi: WALNUT_ABI,
+    functionName: 'shake',
+    args: [1]
+  })
 } 
 
 export function useGetShellStrength() {
@@ -47,10 +41,17 @@ export function useGetShellStrength() {
 }
 
 export function useReset() {
-  // return useShieldedWriteContract({
-  //   address: WALNUT_ADDRESS,
-  //   abi: WALNUT_ABI,
-  //   functionName: 'reset',
-  //   gas: 100000,
-  // })
+  return useShieldedWriteContract({
+    address: WALNUT_ADDRESS,
+    abi: WALNUT_ABI,
+    functionName: 'reset'
+  })
+}
+
+export function useLook() {
+  return useSignedReadContract({
+    address: WALNUT_ADDRESS,
+    abi: WALNUT_ABI,
+    functionName: 'look'
+  })
 }

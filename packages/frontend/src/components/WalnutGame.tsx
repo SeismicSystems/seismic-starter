@@ -4,11 +4,16 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Walnut from './Walnut';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useGetShellStrength, useGetWalnutContract } from '../hooks/useWalnutContract';
+import { useGetShellStrength, useGetWalnutContract, useWalnutHit, useWalnutShake, useReset, useLook } from '../hooks/useWalnutContract';
 
 export default function WalnutGame() {
   const { contract: walnutContract } = useGetWalnutContract()
+  const { write: walnutHit } = useWalnutHit()
+  const { write: walnutShake } = useWalnutShake()
+  const { write: walnutReset } = useReset()
+  const { read: look } = useLook()
   const { data: shellStrengthData } = useGetShellStrength()
+
   const shellStrength = shellStrengthData as number | undefined
 
   // Add state for animations and look result
@@ -21,7 +26,7 @@ export default function WalnutGame() {
   const handleShake = async () => {
     setIsShaking(true);
     try {
-      await walnutContract?.write.shake([1], { gas: 100000 })
+      await walnutShake()
     } catch (error) {
       console.error('Error shaking walnut:', error);
     } finally {
@@ -32,7 +37,7 @@ export default function WalnutGame() {
   const handleHit = async () => {
     setIsHitting(true);
     try {
-      await walnutContract?.write.hit([], { gas: 100000 })
+      await walnutHit()
     } catch (error) {
       console.error('Error hitting walnut:', error);
     } finally {
@@ -43,7 +48,7 @@ export default function WalnutGame() {
   const handleReset = async () => {
     setIsResetting(true);
     try {
-      await walnutContract?.write.reset([], { gas: 100000 })
+      await walnutReset()
     } catch (error) {
       console.error('Error resetting walnut:', error);
     } finally {
@@ -55,7 +60,7 @@ export default function WalnutGame() {
     setIsLooking(true);
     try {
       // Simple read call without transaction parameters
-      const result = await walnutContract?.read.look();
+      const result = await look()
       console.log('Look result:', result);
       setLookResult(result ? result.toString() : null);
     } catch (error) {
