@@ -60,7 +60,7 @@ export default function WalnutGame() {
     setIsLooking(true);
     try {
       // Simple read call without transaction parameters
-      const result = await look()
+      const result = await walnutContract?.read.look()
       console.log('Look result:', result);
       setLookResult(result ? result.toString() : null);
     } catch (error) {
