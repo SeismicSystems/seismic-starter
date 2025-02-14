@@ -1,7 +1,6 @@
 import dotenv from 'dotenv'
 import { join } from 'path'
-import { seismicDevnet } from 'seismic-viem'
-import { anvil } from 'viem/chains'
+import {sanvil, seismicDevnet } from 'seismic-viem'
 
 import { CONTRACT_DIR, CONTRACT_NAME } from '../lib/constants'
 import { readContractABI, readContractAddress } from '../lib/utils'
@@ -30,7 +29,7 @@ async function main() {
   )
 
   const chain =
-    process.env.CHAIN_ID === anvil.id.toString() ? anvil : seismicDevnet
+    process.env.CHAIN_ID === sanvil.id.toString() ? sanvil : seismicDevnet
 
   const players = [
     { name: 'Alice', privateKey: process.env.ALICE_PRIVKEY! },

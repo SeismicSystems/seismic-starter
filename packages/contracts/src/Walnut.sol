@@ -62,11 +62,6 @@ contract Walnut {
         return uint256(kernel); // Return the kernel value.
     }
 
-    // Set the kernel to a specific value.
-    function set_number(suint _kernel) public {
-        kernel = _kernel;
-    }
-
     // Modifier to ensure the shell is fully cracked.
     modifier requireCracked() {
         require(shellStrength == 0, "SHELL_INTACT");
