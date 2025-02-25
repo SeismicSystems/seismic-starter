@@ -74,12 +74,14 @@ async function main() {
   await app.look('Bob')
 
   // Alice tries to look in round 2, should fail by reverting
+  console.log('=== Testing Access Control ===')
+  console.log("Attempting Alice's look() in Bob's round (should revert)")
   try {
     await app.look('Alice')
+    console.error('❌ Expected look() to revert but it succeeded')
+    process.exit(1)
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error'
-    console.error('Alice could not call look() in round 2:', errorMessage)
+    console.log('✅ Received expected revert')
   }
 }
 
