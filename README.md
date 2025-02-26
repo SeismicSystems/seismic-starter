@@ -13,7 +13,20 @@ the shell is cracked.
 
 ### Local Development
 
-First, go through the [`contracts` README](packages/contracts/README.md) to set up the `Walnut` contract.
+#### Installing dependencies
+Make sure you have [bun](https://bun.sh/docs/installation) installed.
+Install the dependencies for the project by running:
 
-Then, go through the [`cli` README](packages/cli/README.md) to set up and run the CLI.
+```bash
+bun install
+```
+from the root directory.
+
+#### Setting up the contracts
+
+Go to the [`contracts` directory](packages/contracts/) and follow the instructions in the [`contracts` README](packages/contracts/README.md) to set up the `Walnut` contract.
+
+#### Setting up and running the CLI
+
+Then, go to the [`cli` directory](packages/cli/) and follow the instructions in the [`cli` README](packages/cli/README.md) to set up and run the CLI.
 
