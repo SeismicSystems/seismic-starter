@@ -13,6 +13,10 @@ the shell is cracked.
 
 ### Local Development
 
+#### Prerequisites
+Make sure you have the `seismic-foundry` suite of dev tools installed. See the installation instructions [here](https://docs.seismic.systems/onboarding/publish-your-docs).
+
+
 #### Installing dependencies
 Make sure you have [bun](https://bun.sh/docs/installation) installed.
 Install the dependencies for the project by running:
