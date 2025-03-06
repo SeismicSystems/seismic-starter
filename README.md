@@ -34,3 +34,7 @@ Go to the [`contracts` directory](packages/contracts/) and follow the instructio
 
 Then, go to the [`cli` directory](packages/cli/) and follow the instructions in the [`cli` README](packages/cli/README.md) to set up and run the CLI.
 
+#### Seismi Media
+[Website](https://www.seismic.systems/)
+[Documentation](https://docs.seismic.systems/)
+
