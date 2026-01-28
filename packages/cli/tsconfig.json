@@ -7,6 +7,8 @@
     "esModuleInterop": true,
     "strict": true,
     "paths": {
+      // TODO: we should publish the new version of seismic-viem to https://www.npmjs.com/package/seismic-viem
+      // and then update package.json to use that version instead of the git link.
       "seismic-viem": [
         "./node_modules/seismic-client/packages/seismic-viem/src"
       ]

@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "dotenv": "^16.4.7",
-    "seismic-viem": "1.0.12",
+    "seismic-client": "git+https://github.com/SeismicSystems/seismic-client.git",
     "viem": "^2.22.3"
   },
   "devDependencies": {
