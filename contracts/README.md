@@ -9,7 +9,7 @@ sanvil
 2. Set the environment variables. You can copy our example `.env` file to start.
 
 ```bash
-cd packages/contracts/
+cd contracts/
 cp .env.example .env
 ```
 

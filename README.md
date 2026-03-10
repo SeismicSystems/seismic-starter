@@ -28,7 +28,7 @@ from the root directory.
 
 #### Setting up the contracts
 
-Go to the [`contracts` directory](packages/contracts/) and follow the instructions in the [`contracts` README](packages/contracts/README.md) to set up the `Walnut` contract.
+Go to the [`contracts` directory](contracts/) and follow the instructions in the [`contracts` README](contracts/README.md) to set up the `Walnut` contract.
 
 #### Setting up and running the CLI
 
