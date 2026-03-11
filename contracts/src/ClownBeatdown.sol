@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT License
 pragma solidity ^0.8.13;
 
-contract Walnut {
+contract ClownBeatdown {
     uint256 initialClownStamina; // Starting stamina restored on reset.
     uint256 clownStamina; // Remaining stamina before the clown is down.
     uint256 round; // The current round number.
 
-    suint256 initialChaosMeter; // Starting hidden chaos score restored on reset.
-    suint256 chaosMeter; // The current hidden chaos score.
+    suint256 initialPunchesUntilKo; // Starting number of punches until the clown is down restored on reset.
+    suint256 punchesUntilKo; // The current number of punches until the clown is down.
 
     // Tracks the number of hits per player per round.
     mapping(uint256 => mapping(address => uint256)) hitsPerRound;
@@ -21,12 +21,12 @@ contract Walnut {
     // Event to log resets.
     event Reset(uint256 indexed newRound, uint256 remainingShellStrength);
 
-    constructor(uint256 _clownStamina, suint256 _chaosMeter) {
+    constructor(uint256 _clownStamina, suint256 _punchesUntilKo) {
         initialClownStamina = _clownStamina; // Set starting stamina.
         clownStamina = _clownStamina; // Initialize remaining stamina.
 
-        initialChaosMeter = _chaosMeter; // Set starting chaos.
-        chaosMeter = _chaosMeter; // Initialize chaos.
+        initialPunchesUntilKo = _punchesUntilKo; // Set starting number of punches until the clown is down.
+        punchesUntilKo = _punchesUntilKo; // Initialize number of punches until the clown is down.
 
         round = 1; // Start with the first round.
     }
@@ -45,21 +45,21 @@ contract Walnut {
 
     // Taunt to increase the hidden chaos meter.
     function shake(suint256 _numShakes) public requireIntact {
-        chaosMeter += _numShakes; // Increment chaos.
+        punchesUntilKo += _numShakes; // Increment number of punches until the clown is down.
         emit Shake(round, msg.sender); // Log the taunt.
     }
 
     // Reset the beatdown for a new round.
     function reset() public requireCracked {
         clownStamina = initialClownStamina; // Reset stamina.
-        chaosMeter = initialChaosMeter; // Reset chaos.
+        punchesUntilKo = initialPunchesUntilKo; // Reset number of punches until the clown is down.
         round++; // Move to the next round.
         emit Reset(round, clownStamina); // Log the reset.
     }
 
     // Reveal chaos once the clown is down and the caller contributed.
     function look() public view requireCracked onlyContributor returns (uint256) {
-        return uint256(chaosMeter); // Return the chaos value.
+        return uint256(punchesUntilKo); // Return the number of punches until the clown is down.
     }
 
     // Modifier to ensure the clown is down.
