@@ -2,12 +2,12 @@
 pragma solidity ^0.8.13;
 
 contract Walnut {
-    uint256 initialShellStrength; // The initial shell strength for resets.
-    uint256 shellStrength; // The current shell strength.
+    uint256 initialClownStamina; // Starting stamina restored on reset.
+    uint256 clownStamina; // Remaining stamina before the clown is down.
     uint256 round; // The current round number.
 
-    suint256 initialKernel; // The initial hidden kernel value for resets.
-    suint256 kernel; // The current hidden kernel value.
+    suint256 initialChaosMeter; // Starting hidden chaos score restored on reset.
+    suint256 chaosMeter; // The current hidden chaos score.
 
     // Tracks the number of hits per player per round.
     mapping(uint256 => mapping(address => uint256)) hitsPerRound;
@@ -15,62 +15,62 @@ contract Walnut {
     // Events to log hits, shakes, and resets.
 
     // Event to log hits.
-    event Hit(uint256 indexed round, address indexed hitter, uint256 remaining); // Logged when a hit occurs.
+    event Hit(uint256 indexed round, address indexed hitter, uint256 remaining); // Logged when a hit lands.
     // Event to log shakes.
-    event Shake(uint256 indexed round, address indexed shaker); // Logged when the Walnut is shaken.
+    event Shake(uint256 indexed round, address indexed shaker); // Logged when a taunt increases chaos.
     // Event to log resets.
     event Reset(uint256 indexed newRound, uint256 remainingShellStrength);
 
-    constructor(uint256 _shellStrength, suint256 _kernel) {
-        initialShellStrength = _shellStrength; // Set the initial shell strength.
-        shellStrength = _shellStrength; // Initialize the shell strength.
+    constructor(uint256 _clownStamina, suint256 _chaosMeter) {
+        initialClownStamina = _clownStamina; // Set starting stamina.
+        clownStamina = _clownStamina; // Initialize remaining stamina.
 
-        initialKernel = _kernel; // Set the initial kernel value.
-        kernel = _kernel; // Initialize the kernel value.
+        initialChaosMeter = _chaosMeter; // Set starting chaos.
+        chaosMeter = _chaosMeter; // Initialize chaos.
 
         round = 1; // Start with the first round.
     }
 
-    // Get the current shell strength.
+    // Get the current clown stamina.
     function getShellStrength() public view returns (uint256) {
-        return shellStrength;
+        return clownStamina;
     }
 
-    // Hit the Walnut to reduce its shell strength.
+    // Hit the clown to reduce stamina.
     function hit() public requireIntact {
-        shellStrength--; // Decrease the shell strength.
+        clownStamina--; // Decrease stamina.
         hitsPerRound[round][msg.sender]++; // Record the player's hit for the current round.
-        emit Hit(round, msg.sender, shellStrength); // Log the hit.
+        emit Hit(round, msg.sender, clownStamina); // Log the hit.
     }
 
-    // Shake the Walnut to increase the kernel value.
+    // Taunt to increase the hidden chaos meter.
     function shake(suint256 _numShakes) public requireIntact {
-        kernel += _numShakes; // Increment the kernel value.
-        emit Shake(round, msg.sender); // Log the shake.
+        chaosMeter += _numShakes; // Increment chaos.
+        emit Shake(round, msg.sender); // Log the taunt.
     }
 
-    // Reset the Walnut for a new round.
+    // Reset the beatdown for a new round.
     function reset() public requireCracked {
-        shellStrength = initialShellStrength; // Reset the shell strength.
-        kernel = initialKernel; // Reset the kernel value.
+        clownStamina = initialClownStamina; // Reset stamina.
+        chaosMeter = initialChaosMeter; // Reset chaos.
         round++; // Move to the next round.
-        emit Reset(round, shellStrength); // Log the reset.
+        emit Reset(round, clownStamina); // Log the reset.
     }
 
-    // Look at the kernel if the shell is cracked and the caller contributed.
+    // Reveal chaos once the clown is down and the caller contributed.
     function look() public view requireCracked onlyContributor returns (uint256) {
-        return uint256(kernel); // Return the kernel value.
+        return uint256(chaosMeter); // Return the chaos value.
     }
 
-    // Modifier to ensure the shell is fully cracked.
+    // Modifier to ensure the clown is down.
     modifier requireCracked() {
-        require(shellStrength == 0, "SHELL_INTACT");
+        require(clownStamina == 0, "CLOWN_STILL_STANDING");
         _;
     }
 
-    // Modifier to ensure the shell is not cracked.
+    // Modifier to ensure the clown is still standing.
     modifier requireIntact() {
-        require(shellStrength > 0, "SHELL_ALREADY_CRACKED");
+        require(clownStamina > 0, "CLOWN_ALREADY_DOWN");
         _;
     }
 
