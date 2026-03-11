@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Monomaniac+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Tomorrow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet');
+@import 'tailwindcss';
+
+:root {
+  --bgColor: #f1dac4;
+  --darkColor: #ac00bc;
+  --midColor: #ffffff;
+  --lightColor: #ffffff;
+  --creamWhite: #f1dac4;
+}
+
+@theme {
+  --breakpoint-xs: 0rem;
+  --breakpoint-sm: 37.5rem; /* 600px */
+  --breakpoint-md: 56.25rem; /* 900px */
+  --breakpoint-lg: 75rem; /* 1200px */
+  --breakpoint-xl: 96rem; /* 1536px */
+}
+body {
+  background-image: url('/clown_bg3.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat;
+  width: 100dvw;
+  height: 100dvh;
+}
+
+html {
+  width: 100dvw;
+  height: 100dvh;
+}
+
+.clown-image {
+  max-width: 100%;
+  height: auto;
+}
