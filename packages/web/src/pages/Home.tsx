@@ -10,18 +10,18 @@ const Home: React.FC = () => {
     <div className="flex flex-col min-h-screen">
       <Container maxWidth={false} disableGutters>
         <Box
-          className="wallet-connect-container mr-12"
+          className="wallet-connect-container"
           sx={{
             display: 'flex',
             position: 'absolute',
-            top: { xs: 5, sm: 8, md: 30 },
-            right: { xs: 5, sm: 8, md: 30 },
+            top: { xs: 25, sm: 8, md: 30 },
+            right: { xs: 20, sm: 8, md: 30 },
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: 'var(--darkColor)',
+            backgroundColor: 'white',
             height: { xs: '3rem', sm: '3.5rem', md: '4rem', lg: '5.5rem' },
             width: { xs: '3rem', sm: '3.5rem', md: '4rem', lg: '5.5rem' },
-            color: 'white',
+            color: 'black',
             borderRadius: '100px',
             border: '5px solid black',
           }}

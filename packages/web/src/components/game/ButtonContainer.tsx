@@ -1,38 +1,74 @@
 import { useState } from 'react'
 
-import { Box } from '@mui/material'
+import { Box, type SxProps, type Theme } from '@mui/material'
 
 type ButtonContainerProps = {
-  shellStrength: number | null
-  isShaking: boolean
+  clownStamina: number | null
   isHitting: boolean
   isResetting: boolean
   isLooking: boolean
-  handleShake: () => void
   handleHit: () => void
   handleReset: () => void
-  handleLook: () => void
+  handleRob: () => void
   position?: 'left' | 'right' | 'mobile'
 }
 
+type ActionButtonProps = {
+  onClick: () => void
+  active: boolean
+  src: string
+  alt: string
+  className: string
+  sx?: SxProps<Theme>
+}
+
+const ActionButton = ({
+  onClick,
+  active,
+  src,
+  alt,
+  className,
+  sx,
+}: ActionButtonProps) => (
+  <Box
+    onClick={onClick}
+    component="div"
+    sx={{
+      cursor: active ? 'default' : 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...sx,
+    }}
+  >
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+    />
+  </Box>
+)
+
 export default function ButtonContainer({
-  shellStrength,
-  isShaking,
+  clownStamina,
   isHitting,
   isResetting,
   isLooking,
-  handleShake,
   handleHit,
   handleReset,
-  handleLook,
+  handleRob,
   position = 'mobile',
 }: ButtonContainerProps) {
-  const handleLookClick = () => {
+  const [showRobActive, setShowRobActive] = useState(false)
+  const [showResetActive, setShowResetActive] = useState(false)
+
+  const handleRobClick = () => {
     if (!isLooking) {
-      setShowLookActive(true)
+      setShowRobActive(true)
       setTimeout(() => {
-        setShowLookActive(false)
-        handleLook()
+        setShowRobActive(false)
+        handleRob()
       }, 200)
     }
   }
@@ -47,413 +83,129 @@ export default function ButtonContainer({
     }
   }
 
-  const [showLookActive, setShowLookActive] = useState(false)
-  const [showResetActive, setShowResetActive] = useState(false)
+  const isStanding = clownStamina !== null && clownStamina > 0
 
-  // For large screens with side-by-side layout, only show one button per container
+  const robBtn = {
+    onClick: handleRobClick,
+    active: isLooking,
+    src: showRobActive ? '/rob_active.png' : '/rob_btn.png',
+    alt: 'Rob',
+    className: 'look-btn',
+  }
+
+  const hitBtn = {
+    onClick: handleHit,
+    active: isHitting,
+    src: isHitting ? '/punch_active.png' : '/punch_btn.png',
+    alt: 'Punch',
+    className: 'punch-btn',
+  }
+
+  const resetBtn = {
+    onClick: handleResetClick,
+    active: isResetting,
+    src: showResetActive ? '/reset_active.png' : '/reset_btn.png',
+    alt: 'Reset',
+    className: 'reset-btn',
+  }
+
+  const rightBtn = isStanding ? hitBtn : resetBtn
+
   if (position === 'left') {
     return (
       <Box
         sx={{
-          width: { lg: '35%', xl: '35%' },
+          width: { lg: '100%' },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-end',
-
           pr: { lg: 4, xl: 6 },
         }}
       >
-        {shellStrength !== null && shellStrength > 0 ? (
-          <Box
-            onClick={handleShake}
-            component="div"
-            sx={{
-              cursor: isShaking ? 'default' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: { xs: 0, lg: 4 },
-
-              height: {
-                lg: '30rem',
-                xl: '30rem',
-              },
-              width: {
-                lg: '30rem',
-                xl: '30rem',
-              },
-            }}
-          >
-            {isShaking ? (
-              <img
-                src="/shake_active.png"
-                alt="Shake"
-                className="shake-btn"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                }}
-              />
-            ) : (
-              <img
-                src="/shake_btn.png"
-                alt="Shake"
-                className="shake-btn"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                }}
-              />
-            )}
-          </Box>
-        ) : (
-          <Box
-            onClick={handleLookClick}
-            component="div"
-            sx={{
-              cursor: isLooking ? 'default' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '20rem',
-              marginRight: 6,
-              height: '18rem',
-            }}
-          >
-            {isLooking ? (
-              <img
-                src="/rob_btn.png"
-                className="look-btn"
-                alt="rob"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                }}
-              />
-            ) : (
-              <img
-                src={showLookActive ? '/rob_active.png' : '/rob_btn.png'}
-                alt="Look"
-                className="look-btn"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                }}
-              />
-            )}
-          </Box>
-        )}
+        <ActionButton
+          {...robBtn}
+          sx={{ width: '20rem', marginRight: 6, height: '20rem' }}
+        />
       </Box>
     )
   }
 
-  // Right side button for desktop layout
   if (position === 'right') {
     return (
       <Box
         sx={{
-          width: { lg: '35%', xl: '35%' },
+          width: { lg: '100%' },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-start',
           pl: { lg: 4, xl: 6 },
         }}
       >
-        {shellStrength !== null && shellStrength > 0 ? (
-          <Box
-            onClick={handleHit}
-            component="div"
-            sx={{
-              cursor: isHitting ? 'default' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginLeft: { xs: 0, lg: 8 },
-              height: {
-                lg: '25rem',
-                xl: '25rem',
-              },
-              width: {
-                lg: '25rem',
-                xl: '25rem',
-              },
-            }}
-          >
-            {isHitting ? (
-              <img
-                src="/punch_active.png"
-                className="punch-btn"
-                alt="Punch"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                }}
-              />
-            ) : (
-              <img
-                src="/punch_btn.png"
-                className="punch-btn"
-                alt="Punch"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                }}
-              />
-            )}
-          </Box>
-        ) : (
-          <Box
-            onClick={handleResetClick}
-            component="div"
-            sx={{
-              cursor: isResetting ? 'default' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '20rem',
-              marginLeft: '3rem',
-              height: '20rem',
-            }}
-          >
-            {isResetting ? (
-              <img
-                src="/reset_btn.png"
-                className="reset-btn"
-                alt="Reset"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                }}
-              />
-            ) : (
-              <img
-                src={showResetActive ? '/reset_active.png' : '/reset_btn.png'}
-                alt="Reset"
-                className="reset-btn"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                }}
-              />
-            )}
-          </Box>
-        )}
+        <ActionButton
+          {...rightBtn}
+          sx={
+            isStanding
+              ? {
+                  marginLeft: { xs: 0, lg: 8 },
+                  height: { lg: '18rem' },
+                }
+              : { width: '20rem', marginLeft: '3rem', height: '18rem' }
+          }
+        />
       </Box>
     )
   }
 
-  // Original mobile layout with both buttons
-  return (
-    <>
-      <Box
-        sx={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: { xs: 0, sm: 0, md: 0, lg: 70, xl: 70 },
-          marginRight: { xs: 0, sm: 4, md: 4, lg: 6, xl: 0 },
-          marginLeft: { xs: 0, sm: 4, md: 4, lg: 6, xl: 0 },
-        }}
-      >
-        {/* Left button */}
-        <Box>
-          {shellStrength !== null && shellStrength > 0 ? (
-            <Box
-              onClick={handleShake}
-              component="div"
-              sx={{
-                cursor: isShaking ? 'default' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: {
-                  xs: '12rem',
-                  sm: '20rem',
-                  md: '28rem',
-                  lg: '30rem',
-                  xl: '30rem',
-                },
-                width: {
-                  xs: '12rem',
-                  sm: '20rem',
-                  md: '28rem',
-                  lg: '30rem',
-                  xl: '30rem',
-                },
-              }}
-            >
-              {isShaking ? (
-                <img
-                  src="/shake_active.png"
-                  alt="Shake"
-                  className="shake-btn"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                  }}
-                />
-              ) : (
-                <img
-                  src="/shake_btn.png"
-                  alt="Shake"
-                  className="shake-btn"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                  }}
-                />
-              )}
-            </Box>
-          ) : (
-            <Box
-              onClick={handleLookClick}
-              component="div"
-              sx={{
-                cursor: isLooking ? 'default' : 'pointer',
-                display: 'flex',
-                height: {
-                  xs: '12rem',
-                  sm: '20rem',
-                  md: '28rem',
-                  lg: '30rem',
-                  xl: '30rem',
-                },
-                width: {
-                  xs: '12rem',
-                  sm: '20rem',
-                  md: '28rem',
-                  lg: '30rem',
-                  xl: '30rem',
-                },
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {isLooking ? (
-                <img src="/rob_btn.png" className="look-btn" alt="rob" />
-              ) : (
-                <img
-                  src={showLookActive ? '/rob_active.png' : '/rob_btn.png'}
-                  alt="Look"
-                  className="look-btn"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                  }}
-                />
-              )}
-            </Box>
-          )}
-        </Box>
+  // Mobile layout — both buttons side by side
+  const MOBILE_SIZE = {
+    xs: '12rem',
+    sm: '20rem',
+    md: '20rem',
+    lg: '30rem',
+    xl: '30rem',
+  }
 
-        {/* Right button */}
-        <Box>
-          {shellStrength !== null && shellStrength > 0 ? (
-            <Box
-              onClick={handleHit}
-              component="div"
-              sx={{
-                cursor: isHitting ? 'default' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: { xs: 4, sm: 4, md: 0, lg: 0, xl: 0 },
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: { xs: 0, sm: 0, md: 0, lg: 70, xl: 70 },
+        marginRight: { xs: 0, sm: 4, md: 4, lg: 6, xl: 0 },
+        marginLeft: { xs: 0, sm: 4, md: 4, lg: 6, xl: 0 },
+      }}
+    >
+      <ActionButton
+        {...robBtn}
+        sx={{ height: MOBILE_SIZE, width: MOBILE_SIZE }}
+      />
+      <ActionButton
+        {...rightBtn}
+        sx={
+          isStanding
+            ? {
+                marginRight: { xs: 0, sm: 4, md: 0, lg: 0, xl: 0 },
                 height: {
                   xs: '10rem',
                   sm: '18rem',
-                  md: '25rem',
+                  md: '20rem',
                   lg: '30rem',
                   xl: '30rem',
                 },
                 width: {
-                  xs: '8rem',
+                  xs: '12rem',
                   sm: '14rem',
                   md: '28rem',
                   lg: '30rem',
                   xl: '30rem',
                 },
-              }}
-            >
-              {isHitting ? (
-                <img
-                  src="/punch_active.png"
-                  className="punch-btn"
-                  alt="Punch"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                  }}
-                />
-              ) : (
-                <img
-                  src="/punch_btn.png"
-                  className="punch-btn"
-                  alt="Punch"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                  }}
-                />
-              )}
-            </Box>
-          ) : (
-            <Box
-              onClick={handleResetClick}
-              component="div"
-              sx={{
-                cursor: isResetting ? 'default' : 'pointer',
-                display: 'flex',
-                height: {
-                  xs: '12rem',
-                  sm: '20rem',
-                  md: '28rem',
-                  lg: '30rem',
-                  xl: '30rem',
-                },
-                width: {
-                  xs: '12rem',
-                  sm: '20rem',
-                  md: '28rem',
-                  lg: '30rem',
-                  xl: '30rem',
-                },
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {isResetting ? (
-                <img src="/reset_btn.png" className="reset-btn" alt="Reset" />
-              ) : (
-                <img
-                  src={showResetActive ? '/reset_active.png' : '/reset_btn.png'}
-                  alt="Reset"
-                  className="reset-btn"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                  }}
-                />
-              )}
-            </Box>
-          )}
-        </Box>
-      </Box>
-    </>
+              }
+            : { height: MOBILE_SIZE, width: MOBILE_SIZE }
+        }
+      />
+    </Box>
   )
 }

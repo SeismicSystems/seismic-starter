@@ -21,7 +21,7 @@ body {
   background-image: url('/clown_bg3.png');
   background-size: cover;
   background-position: center;
-  background-repeat: repeat;
+  background-repeat: no-repeat;
   width: 100dvw;
   height: 100dvh;
 }
