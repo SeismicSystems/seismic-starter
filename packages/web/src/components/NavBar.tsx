@@ -16,7 +16,7 @@ const NavBar: React.FC = () => {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'var(--darkColor)',
-        top: 'auto',
+      top: 'auto',
         bottom: 0,
       }}
     >
