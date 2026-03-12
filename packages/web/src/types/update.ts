@@ -1,4 +1,4 @@
-type Address = string
+import { Address } from 'viem'
 
 import { Round } from '@/types/round'
 

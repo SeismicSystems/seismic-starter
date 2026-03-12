@@ -2,9 +2,32 @@
   "workspaces": [
     "packages/**"
   ],
+  "scripts": {
+    "dev:local": "bun env:local:anvil && bun run --cwd ./packages/processes dev",
+    "dev:local:reset": "bun env:local:anvil && bun run --cwd ./packages/processes dev --reset",
+    "env:local:anvil": "cp .env.local-anvil .env",
+    "anvil:new": "rimraf ~/.anvil/state.json && mkdir -p ~/.anvil && sanvil --state ~/.anvil",
+    "anvil:state": "mkdir -p ~/.anvil && sanvil --state ~/.anvil",
+    "web:dev": "bun run contract:abis:copy && bun run --cwd ./packages/web dev",
+    "web:build": "bun run contract:abis:copy && bun run --cwd ./packages/web build",
+    "web:lint": "bun run --cwd ./packages/web lint",
+    "web:preview": "bun run --cwd ./packages/web preview",
+    "contract:clean": "bun run --cwd ./contracts sforge clean && bun run --cwd ./contracts rimraf broadcast/ cache/ out/",
+    "contract:deploy": "source .env && VITE_CHAIN_ID=$VITE_CHAIN_ID bun contract:dev && DEPLOYER_PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY bun run --cwd ./contracts sforge script script/ClownBeatdown.s.sol --rpc-url $RPC_URL --broadcast && VITE_CHAIN_ID=$VITE_CHAIN_ID bun contract:addresses",
+    "contract:dev": "bun contract:build && source .env && VITE_CHAIN_ID=$VITE_CHAIN_ID bun contract:abis",
+    "contract:build": "bun run --cwd ./contracts sforge build",
+    "contract:abis:copy": "source .env && VITE_CHAIN_ID=$VITE_CHAIN_ID bun contract:abis:cp",
+    "contract:abis:cp": "mkdir -p ./packages/web/src/abis && cp -r ./contracts/abis/$VITE_CHAIN_ID/* ./packages/web/src/abis",
+    "contract:abis": "CONTRACT=ClownBeatdown bun contract:abi",
+    "contract:abi": "mkdir -p ./contracts/abis/$VITE_CHAIN_ID/contracts && jq --argjson chainId $VITE_CHAIN_ID '{chainId: $chainId, methodIdentifiers: .methodIdentifiers, abi: .abi}' ./contracts/out/$CONTRACT.sol/$CONTRACT.json > ./contracts/abis/$VITE_CHAIN_ID/contracts/$CONTRACT.json && bun prettier --write ./contracts/abis/$VITE_CHAIN_ID/contracts/$CONTRACT.json",
+    "contract:addresses": "bun contract:address:clownbeatdown",
+    "contract:address:clownbeatdown": "CONTRACT=ClownBeatdown BROADCAST=ClownBeatdown RECEIPT=0 bun contract:address",
+    "contract:address": "jq --arg receipt \"$RECEIPT\" -s '{\"address\": .[0].receipts[($receipt | tonumber)].contractAddress} * .[1]' ./contracts/broadcast/$BROADCAST.s.sol/$VITE_CHAIN_ID/run-latest.json ./contracts/abis/$VITE_CHAIN_ID/contracts/$CONTRACT.json > temp.json && mv temp.json ./contracts/abis/$VITE_CHAIN_ID/contracts/$CONTRACT.json"
+  },
   "dependencies": {},
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.1",
-    "prettier": "^3.4.2"
+    "prettier": "^3.4.2",
+    "rimraf": "^6.0.1"
   }
 }

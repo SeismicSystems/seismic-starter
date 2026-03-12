@@ -1,3 +1,5 @@
+import { formatUnits } from 'viem'
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const stringifyBigInt = (_: any, value: any) =>
   typeof value === 'bigint' ? value.toString() : value
@@ -43,4 +45,17 @@ export const parseBigInt = (amt: string | null): bigint | null => {
   } catch {
     return null
   }
+}
+
+export const formatUnitsRounded = (
+  value: bigint,
+  decimals: number,
+  places: number = 6
+) => {
+  const formatted = formatUnits(value, decimals)
+  const [integer, fraction] = formatted.split('.')
+  if (!fraction) {
+    return formatted
+  }
+  return `${integer}.${fraction.slice(0, places)}`
 }

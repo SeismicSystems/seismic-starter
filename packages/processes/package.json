@@ -1,0 +1,16 @@
+{
+  "name": "seismic-starter-processes",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/main.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "@types/bun": "latest",
+    "typescript": "~5.6.2",
+    "terminate": "^2.8.0"
+  }
+}

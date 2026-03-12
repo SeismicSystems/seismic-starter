@@ -1,4 +1,8 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { useAccount } from 'wagmi'
+
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 // Create authentication context
 type AuthContextType = {
@@ -43,12 +47,26 @@ const WalletButton: React.FC<
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const authState: AuthContextType = {
-    isAuthenticated: true,
-    isLoading: false,
+  const { openConnectModal } = useConnectModal() || {
     openConnectModal: () => {},
-    accountName: '0xDEAD...BEEF',
   }
+  const { address, isConnecting, isConnected, isDisconnected } = useAccount()
+  const [authState, setAuthState] = useState<AuthContextType>({
+    isAuthenticated: false,
+    isLoading: true,
+    openConnectModal: openConnectModal || (() => {}),
+  })
+
+  useEffect(() => {
+    setAuthState({
+      isAuthenticated: isConnected,
+      isLoading: isConnecting,
+      openConnectModal: openConnectModal || (() => {}),
+      accountName: address
+        ? `${address.slice(0, 6)}...${address.slice(-4)}`
+        : undefined,
+    })
+  }, [isConnected, isConnecting, isDisconnected, address, openConnectModal])
 
   return (
     <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
@@ -57,11 +75,48 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
 
 const WalletConnectButton = () => {
   return (
-    <WalletButton onClick={() => {}}>
-      <span className="">
-        <WalletIcon />
-      </span>
-    </WalletButton>
+    <ConnectButton.Custom>
+      {({
+        account,
+        openConnectModal,
+        chain,
+        openAccountModal,
+        openChainModal,
+        mounted,
+        authenticationStatus,
+      }) => {
+        if (!mounted || authenticationStatus === 'loading') {
+          return <></>
+        }
+        if (!account || authenticationStatus === 'unauthenticated') {
+          return (
+            <WalletButton onClick={openConnectModal}>
+              <span className="md:inline hidden">CONNECT WALLET</span>
+              <span className="md:hidden">
+                <WalletIcon />
+              </span>
+            </WalletButton>
+          )
+        }
+        if (chain?.unsupported) {
+          return (
+            <WalletButton onClick={openChainModal}>
+              <span className="md:inline hidden">Unsupported chain</span>
+              <span className="md:hidden">
+                <WalletIcon />
+              </span>
+            </WalletButton>
+          )
+        }
+        return (
+          <WalletButton onClick={openAccountModal}>
+            <span className="">
+              <WalletIcon />
+            </span>
+          </WalletButton>
+        )
+      }}
+    </ConnectButton.Custom>
   )
 }
 
