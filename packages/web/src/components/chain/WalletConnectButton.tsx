@@ -1,8 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
+import React, { createContext, useContext } from 'react'
 
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+// WEB3 REMOVED FOR UI DEVELOPMENT — restore from git when done
 
 // Create authentication context
 type AuthContextType = {
@@ -13,12 +11,30 @@ type AuthContextType = {
 }
 
 const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  isLoading: true,
+  isAuthenticated: true,
+  isLoading: false,
   openConnectModal: () => {},
+  accountName: '0xMock...UI',
 })
 
 export const useAuth = () => useContext(AuthContext)
+
+export const AuthProvider: React.FC<React.PropsWithChildren> = ({
+  children,
+}) => {
+  return (
+    <AuthContext.Provider
+      value={{
+        isAuthenticated: true,
+        isLoading: false,
+        openConnectModal: () => {},
+        accountName: '0xMock...UI',
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
+}
 
 // Wallet icon component using SVG for better quality
 const WalletIcon = () => (
@@ -32,91 +48,13 @@ const WalletIcon = () => (
   </svg>
 )
 
-const WalletButton: React.FC<
-  React.PropsWithChildren<
-    { onClick: () => void } & React.HTMLAttributes<HTMLButtonElement>
-  >
-> = ({ children, onClick, ...props }) => {
-  return (
-    <button onClick={onClick} className="" {...props}>
-      {children}
-    </button>
-  )
-}
-
-export const AuthProvider: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
-  const { openConnectModal } = useConnectModal() || {
-    openConnectModal: () => {},
-  }
-  const { address, isConnecting, isConnected, isDisconnected } = useAccount()
-  const [authState, setAuthState] = useState<AuthContextType>({
-    isAuthenticated: false,
-    isLoading: true,
-    openConnectModal: openConnectModal || (() => {}),
-  })
-
-  useEffect(() => {
-    setAuthState({
-      isAuthenticated: isConnected,
-      isLoading: isConnecting,
-      openConnectModal: openConnectModal || (() => {}),
-      accountName: address
-        ? `${address.slice(0, 6)}...${address.slice(-4)}`
-        : undefined,
-    })
-  }, [isConnected, isConnecting, isDisconnected, address, openConnectModal])
-
-  return (
-    <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
-  )
-}
-
 const WalletConnectButton = () => {
   return (
-    <ConnectButton.Custom>
-      {({
-        account,
-        openConnectModal,
-        chain,
-        openAccountModal,
-        openChainModal,
-        mounted,
-        authenticationStatus,
-      }) => {
-        if (!mounted || authenticationStatus === 'loading') {
-          return <></>
-        }
-        if (!account || authenticationStatus === 'unauthenticated') {
-          return (
-            <WalletButton onClick={openConnectModal}>
-              <span className="md:inline hidden">CONNECT WALLET</span>
-              <span className="md:hidden">
-                <WalletIcon />
-              </span>
-            </WalletButton>
-          )
-        }
-        if (chain?.unsupported) {
-          return (
-            <WalletButton onClick={openChainModal}>
-              <span className="md:inline hidden">Unsupported chain</span>
-              <span className="md:hidden">
-                <WalletIcon />
-              </span>
-            </WalletButton>
-          )
-        }
-        return (
-          <WalletButton onClick={openAccountModal}>
-            <span className="">
-              <WalletIcon />
-            </span>
-          </WalletButton>
-        )
-      }}
-    </ConnectButton.Custom>
+    <button>
+      <span className="">
+        <WalletIcon />
+      </span>
+    </button>
   )
 }
 

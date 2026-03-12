@@ -2,7 +2,8 @@ import React from 'react'
 
 import WalletConnectButton from '@/components/chain/WalletConnectButton'
 import { Box } from '@mui/material'
-import '@rainbow-me/rainbowkit/styles.css'
+
+// import '@rainbow-me/rainbowkit/styles.css' // WEB3 REMOVED FOR UI DEV
 
 const NavBar: React.FC = () => {
   return (

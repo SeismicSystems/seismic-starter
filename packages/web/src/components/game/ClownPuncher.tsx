@@ -21,12 +21,12 @@ const ClownPuncher: React.FC = () => {
   const { isAuthenticated } = useAuth()
   const [showGame, setShowGame] = useState(false)
   const [showSecretSplash, setShowSecretSplash] = useState(false)
+  const [showRobRefused, setShowRobRefused] = useState(false)
   const prevRoundIdRef = useRef<number | null>(null)
   const {
     loaded,
     currentRoundId,
-    shellStrength,
-    isShaking,
+    clownStamina,
     isHitting,
     isResetting,
     isLooking,
@@ -34,7 +34,6 @@ const ClownPuncher: React.FC = () => {
     punchCount,
     fetchGameRounds,
     resetGameState,
-    handleShake,
     handleHit,
     handleReset,
     handleLook,
@@ -79,6 +78,24 @@ const ClownPuncher: React.FC = () => {
     return <EntryScreen onEnter={() => setShowGame(true)} />
   }
 
+  const onRob = () => {
+    if (clownStamina !== null && clownStamina > 0) {
+      setShowRobRefused(true)
+      return
+    }
+    handleLook()
+  }
+
+  const buttonProps = {
+    clownStamina,
+    isHitting,
+    isResetting,
+    isLooking,
+    handleHit,
+    handleReset,
+    handleRob: onRob,
+  } as const
+
   return (
     <Container
       sx={{
@@ -93,6 +110,7 @@ const ClownPuncher: React.FC = () => {
       <Box
         sx={{
           mt: { xs: 3, sm: 3, md: 5, lg: 4, xl: 10 },
+          height: '30dvh',
           mb: 2,
           display: 'flex',
           justifyContent: 'center',
@@ -105,17 +123,20 @@ const ClownPuncher: React.FC = () => {
         />
       </Box>
 
-      {/* Secret Number Splash Screen */}
+      {/* Splash Screen — secret revealed or rob refused */}
       <Backdrop
         sx={{
           color: '#fff',
           zIndex: (theme) => theme.zIndex.drawer + 1,
           backgroundColor: 'rgba(0, 0, 0, 0.85)',
         }}
-        open={showSecretSplash && lookResult !== null}
-        onClick={() => setShowSecretSplash(false)}
+        open={(showSecretSplash && lookResult !== null) || showRobRefused}
+        onClick={() => {
+          setShowSecretSplash(false)
+          setShowRobRefused(false)
+        }}
       >
-        <Fade in={showSecretSplash && lookResult !== null}>
+        <Fade in={(showSecretSplash && lookResult !== null) || showRobRefused}>
           <Box
             sx={{
               backgroundColor: 'background.paper',
@@ -126,22 +147,47 @@ const ClownPuncher: React.FC = () => {
               boxShadow: 24,
             }}
           >
-            <Typography
-              variant="h4"
-              fontWeight="bold"
-              color="white"
-              gutterBottom
-            >
-              SECRET REVEALED!
-            </Typography>
-            <Typography
-              variant="h1"
-              fontWeight="bold"
-              color="white"
-              gutterBottom
-            >
-              {lookResult?.toString()}
-            </Typography>
+            {showRobRefused ? (
+              <>
+                <Typography
+                  variant="h4"
+                  fontWeight="bold"
+                  color="white"
+                  gutterBottom
+                >
+                  NOT SO FAST!
+                </Typography>
+                <Typography variant="h6" color="white" gutterBottom>
+                  The clown isn't giving up that easily.
+                </Typography>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ mt: 2 }}
+                >
+                  Knock him out first!
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography
+                  variant="h4"
+                  fontWeight="bold"
+                  color="white"
+                  gutterBottom
+                >
+                  SECRET REVEALED!
+                </Typography>
+                <Typography
+                  variant="h1"
+                  fontWeight="bold"
+                  color="white"
+                  gutterBottom
+                >
+                  {lookResult?.toString()}
+                </Typography>
+              </>
+            )}
             <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
               (Click anywhere to close)
             </Typography>
@@ -153,105 +199,58 @@ const ClownPuncher: React.FC = () => {
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            flexDirection: { xs: 'column', lg: 'row' },
+            justifyContent: { lg: 'space-between' },
             alignItems: 'center',
             width: '100%',
+            position: 'relative',
+            height: { lg: '500px', xl: '600px' },
             my: { xs: 0, md: 5, lg: 0, xl: 1 },
           }}
         >
-          {/* Desktop Layout - Horizontal with clown in middle */}
+          {/* Desktop: left buttons */}
+          <Box sx={{ display: { xs: 'none', lg: 'flex' } }}>
+            <ButtonContainer {...buttonProps} position="left" />
+          </Box>
+
+          {/* Clown — rendered once, responsive positioning */}
           <Box
+            className="clown-container"
             sx={{
-              display: { xs: 'none', lg: 'flex' },
-              flexDirection: 'row',
-              justifyContent: 'space-between',
+              display: 'flex',
+              justifyContent: 'center',
               alignItems: 'center',
-              width: '100%',
-              position: 'relative',
-              height: { lg: '500px', xl: '600px' },
+              position: { lg: 'absolute' },
+              left: { lg: '50%' },
+              transform: { lg: 'translateX(-50%)' },
+              zIndex: 2,
+              width: { lg: '50%', xl: '40%' },
             }}
           >
-            <ButtonContainer
-              shellStrength={shellStrength}
-              isShaking={isShaking}
-              isHitting={isHitting}
-              isResetting={isResetting}
-              isLooking={isLooking}
-              handleShake={handleShake}
-              handleHit={handleHit}
-              handleReset={handleReset}
-              handleLook={handleLook}
-              position="left"
-            />
-            <Box
-              sx={{
-                position: 'absolute',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 2,
-                width: { lg: '50%', xl: '40%' },
-              }}
-            >
-              <ShowClown
-                isKO={shellStrength === 0}
-                isShakingAnimation={isShaking}
-                isHittingAnimation={isHitting}
-                punchCount={punchCount}
-              />
-            </Box>
-            <ButtonContainer
-              shellStrength={shellStrength}
-              isShaking={isShaking}
-              isHitting={isHitting}
-              isResetting={isResetting}
-              isLooking={isLooking}
-              handleShake={handleShake}
-              handleHit={handleHit}
-              handleReset={handleReset}
-              handleLook={handleLook}
-              position="right"
+            <ShowClown
+              isKO={clownStamina === 0}
+              isShakingAnimation={false}
+              isHittingAnimation={isHitting}
+              punchCount={punchCount}
             />
           </Box>
 
-          {/* Mobile Layout - Vertical with buttons below */}
+          {/* Desktop: right buttons */}
+          <Box sx={{ display: { xs: 'none', lg: 'flex' } }}>
+            <ButtonContainer {...buttonProps} position="right" />
+          </Box>
+
+          {/* Mobile: all buttons below clown */}
           <Box
             sx={{
               display: { xs: 'flex', lg: 'none' },
-              flexDirection: 'column',
               width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: { xs: 3, md: 5 },
             }}
           >
-            <div className="clown-container flex justify-center items-center">
-              <ShowClown
-                isKO={shellStrength === 0}
-                isShakingAnimation={isShaking}
-                isHittingAnimation={isHitting}
-                punchCount={punchCount}
-              />
-            </div>
-            <Box
-              sx={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: { xs: 3, md: 5 },
-              }}
-            >
-              <ButtonContainer
-                shellStrength={shellStrength}
-                isShaking={isShaking}
-                isHitting={isHitting}
-                isResetting={isResetting}
-                isLooking={isLooking}
-                handleShake={handleShake}
-                handleHit={handleHit}
-                handleReset={handleReset}
-                handleLook={handleLook}
-                position="mobile"
-              />
-            </Box>
+            <ButtonContainer {...buttonProps} position="mobile" />
           </Box>
         </Box>
       ) : (

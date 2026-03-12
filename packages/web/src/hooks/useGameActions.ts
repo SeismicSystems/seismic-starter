@@ -184,10 +184,6 @@ export const useGameActions = () => {
   const handleLook = async () => {
     playRob()
     if (!loaded || isLooking) return
-    if (clownStamina !== 0) {
-      notifyError('Clown must be KO to look')
-      return
-    }
     setIsLooking(true)
     look()
       .then((result) => {
