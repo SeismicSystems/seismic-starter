@@ -115,7 +115,7 @@ export default function ButtonContainer({
     return (
       <Box
         sx={{
-          width: { lg: '35%', xl: '35%' },
+          width: { lg: '100%' },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-end',
@@ -124,7 +124,7 @@ export default function ButtonContainer({
       >
         <ActionButton
           {...robBtn}
-          sx={{ width: '20rem', marginRight: 6, height: '18rem' }}
+          sx={{ width: '20rem', marginRight: 6, height: '20rem' }}
         />
       </Box>
     )
@@ -134,7 +134,7 @@ export default function ButtonContainer({
     return (
       <Box
         sx={{
-          width: { lg: '35%', xl: '35%' },
+          width: { lg: '100%' },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-start',
@@ -147,8 +147,7 @@ export default function ButtonContainer({
             isStanding
               ? {
                   marginLeft: { xs: 0, lg: 8 },
-                  height: { lg: '25rem', xl: '25rem' },
-                  width: { lg: '25rem', xl: '25rem' },
+                  height: { lg: '18rem' },
                 }
               : { width: '20rem', marginLeft: '3rem', height: '18rem' }
           }
@@ -161,7 +160,7 @@ export default function ButtonContainer({
   const MOBILE_SIZE = {
     xs: '12rem',
     sm: '20rem',
-    md: '28rem',
+    md: '20rem',
     lg: '30rem',
     xl: '30rem',
   }
@@ -188,16 +187,16 @@ export default function ButtonContainer({
         sx={
           isStanding
             ? {
-                marginRight: { xs: 4, sm: 4, md: 0, lg: 0, xl: 0 },
+                marginRight: { xs: 0, sm: 4, md: 0, lg: 0, xl: 0 },
                 height: {
                   xs: '10rem',
                   sm: '18rem',
-                  md: '25rem',
+                  md: '20rem',
                   lg: '30rem',
                   xl: '30rem',
                 },
                 width: {
-                  xs: '8rem',
+                  xs: '12rem',
                   sm: '14rem',
                   md: '28rem',
                   lg: '30rem',

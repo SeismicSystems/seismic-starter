@@ -110,7 +110,9 @@ const ClownPuncher: React.FC = () => {
       <Box
         sx={{
           mt: { xs: 3, sm: 3, md: 5, lg: 4, xl: 10 },
-          height: '30dvh',
+          height: {
+            xs: '30dvh',
+          },
           mb: 2,
           display: 'flex',
           justifyContent: 'center',
@@ -119,7 +121,7 @@ const ClownPuncher: React.FC = () => {
         <img
           src="/cblogo.png"
           alt="Clown Beatdown Logo"
-          className="clown-logo "
+          className="clown-logo"
         />
       </Box>
 
@@ -225,6 +227,7 @@ const ClownPuncher: React.FC = () => {
               transform: { lg: 'translateX(-50%)' },
               zIndex: 2,
               width: { lg: '50%', xl: '40%' },
+              maxHeight: { xs: '35dvh', md: '30dvh', lg: 'none' },
             }}
           >
             <ShowClown

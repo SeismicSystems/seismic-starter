@@ -1,4 +1,7 @@
-// WEB3 REMOVED FOR UI DEVELOPMENT — restore from git when done
+import { useShieldedContract } from 'seismic-react'
+
+import * as contractJson from '@/abis/contracts/ClownBeatdown.json' with { type: 'json' }
+import type { DeployedContract } from '@/types/contract'
 
 const parseChainId = (): number => {
   const chainId = import.meta.env.VITE_CHAIN_ID || 31337
@@ -10,4 +13,5 @@ const parseChainId = (): number => {
 
 export const CHAIN_ID = parseChainId()
 
-export const useAppContract = () => ({ contract: null })
+export const useAppContract = () =>
+  useShieldedContract(contractJson as DeployedContract)

@@ -3,8 +3,7 @@ import React from 'react'
 import WalletConnectButton from '@/components/chain/WalletConnectButton'
 import ClownPuncher from '@/components/game/ClownPuncher'
 import { Box, Container } from '@mui/material'
-
-// import '@rainbow-me/rainbowkit/styles.css' // WEB3 REMOVED FOR UI DEV
+import '@rainbow-me/rainbowkit/styles.css'
 
 const Home: React.FC = () => {
   return (

@@ -66,8 +66,8 @@ const ShowClown: React.FC<ClownProps> = ({
   return (
     <Box
       sx={{
-        width: { xs: '70%', sm: '70%', md: '100%', lg: '100%', xl: '100%' },
-        height: { xs: '100%', sm: '100%', md: '100%', lg: '100%', xl: '100%' },
+        width: { xs: '70%', sm: '70%', md: '80%', lg: '80%', xl: '100%' },
+        height: { xs: '100%', sm: '70%', md: '80%', lg: '80%', xl: '100%' },
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

@@ -1,75 +1,129 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useShieldedWallet } from 'seismic-react'
+import {
+  ShieldedPublicClient,
+  ShieldedWalletClient,
+  addressExplorerUrl,
+  txExplorerUrl,
+} from 'seismic-viem'
 import type { Hex } from 'viem'
 
-// WEB3 REMOVED FOR UI DEVELOPMENT — restore from git when done
-// Mock contract client that simulates game interactions locally
-
-let mockStamina = 3
-
-const fakeTxHash =
-  '0x0000000000000000000000000000000000000000000000000000000000000000' as Hex
-
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms))
+import { useAppContract } from './useContract'
 
 export const useContractClient = () => {
+  const [loaded, setLoaded] = useState(false)
+  const { walletClient, publicClient } = useShieldedWallet()
+  const { contract } = useAppContract()
+
+  useEffect(() => {
+    if (walletClient && publicClient && contract) {
+      setLoaded(true)
+    } else {
+      setLoaded(false)
+    }
+  }, [walletClient, publicClient, contract])
+
+  const wallet = useCallback((): ShieldedWalletClient => {
+    if (!walletClient) {
+      throw new Error('Wallet client not found')
+    }
+    return walletClient
+  }, [walletClient])
+
+  const pubClient = useCallback((): ShieldedPublicClient => {
+    if (!publicClient) {
+      throw new Error('Public client not found')
+    }
+    return publicClient
+  }, [publicClient])
+
+  const walletAddress = useCallback((): Hex => {
+    return wallet().account.address
+  }, [wallet])
+
+  const appContract = useCallback((): ReturnType<
+    typeof useAppContract
+  >['contract'] => {
+    if (!contract) {
+      throw new Error('Contract not found')
+    }
+    return contract
+  }, [contract])
+
+  /*
+    function getClownStamina() external view returns (uint256);
+    function getShellStrength() external view returns (uint256);
+    function look() external view returns (uint256);
+    function revealChaos() external view returns (uint256);
+    function hit() external;
+    function shake(suint256 _numShakes) external;
+    function taunt(suint256 _numTaunts) external;
+    function reset() external;
+  */
+
   const clownStamina = useCallback(async (): Promise<bigint> => {
-    await delay(100)
-    return BigInt(mockStamina)
-  }, [])
+    return appContract().tread.getClownStamina()
+  }, [appContract])
 
   const look = useCallback(async (): Promise<bigint> => {
-    await delay(200)
-    return BigInt(Math.floor(Math.random() * 1000))
-  }, [])
+    return appContract().read.look()
+  }, [appContract])
 
   const revealChaos = useCallback(async (): Promise<bigint> => {
-    await delay(200)
-    return BigInt(42)
-  }, [])
+    return appContract().read.revealChaos()
+  }, [appContract])
 
   const hit = useCallback(async (): Promise<Hex> => {
-    await delay(300)
-    mockStamina = Math.max(0, mockStamina - 1)
-    return fakeTxHash
-  }, [])
+    return appContract().twrite.hit()
+  }, [appContract])
 
-  const shake = useCallback(async (_numShakes: bigint): Promise<Hex> => {
-    await delay(300)
-    return fakeTxHash
-  }, [])
+  const shake = useCallback(
+    async (numShakes: bigint): Promise<Hex> => {
+      return appContract().write.shake([numShakes])
+    },
+    [appContract]
+  )
 
-  const taunt = useCallback(async (_numTaunts: bigint): Promise<Hex> => {
-    await delay(300)
-    return fakeTxHash
-  }, [])
+  const taunt = useCallback(
+    async (numTaunts: bigint): Promise<Hex> => {
+      return appContract().write.taunt([numTaunts])
+    },
+    [appContract]
+  )
 
   const reset = useCallback(async (): Promise<Hex> => {
-    await delay(300)
-    mockStamina = 3
-    return fakeTxHash
-  }, [])
+    return appContract().twrite.reset()
+  }, [appContract])
 
-  const txUrl = useCallback((_txHash: Hex): string | null => {
-    return null
-  }, [])
+  const txUrl = useCallback(
+    (txHash: Hex): string | null => {
+      return txExplorerUrl({ chain: pubClient().chain, txHash })
+    },
+    [pubClient]
+  )
 
-  const addressUrl = useCallback((_address: Hex): string | null => {
-    return null
-  }, [])
+  const addressUrl = useCallback(
+    (address: Hex): string | null => {
+      return addressExplorerUrl({ chain: pubClient().chain, address })
+    },
+    [pubClient]
+  )
 
-  const waitForTransaction = useCallback(async (_hash: Hex) => {
-    await delay(200)
-    return { status: 'success' as const }
-  }, [])
+  const waitForTransaction = useCallback(
+    async (hash: Hex) => {
+      return await pubClient().waitForTransactionReceipt({ hash })
+    },
+    [pubClient]
+  )
 
   return {
-    loaded: true,
-    walletClient: null,
-    publicClient: null,
-    walletAddress: () => '0x0000000000000000000000000000000000000000' as Hex,
-    appContract: () => null,
-    pubClient: () => null,
-    wallet: () => null,
+    loaded,
+    walletClient,
+    publicClient,
+    walletAddress,
+    appContract,
+    pubClient,
+    wallet,
     clownStamina,
     look,
     revealChaos,

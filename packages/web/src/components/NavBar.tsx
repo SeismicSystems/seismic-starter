@@ -2,8 +2,7 @@ import React from 'react'
 
 import WalletConnectButton from '@/components/chain/WalletConnectButton'
 import { Box } from '@mui/material'
-
-// import '@rainbow-me/rainbowkit/styles.css' // WEB3 REMOVED FOR UI DEV
+import '@rainbow-me/rainbowkit/styles.css'
 
 const NavBar: React.FC = () => {
   return (
@@ -16,7 +15,7 @@ const NavBar: React.FC = () => {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'var(--darkColor)',
-      top: 'auto',
+        top: 'auto',
         bottom: 0,
       }}
     >
