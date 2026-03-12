@@ -61,7 +61,7 @@ export const useContractClient = () => {
     function reset() external;
   */
 
-  const shellStrength = useCallback(async (): Promise<bigint> => {
+  const clownStamina = useCallback(async (): Promise<bigint> => {
     return appContract().tread.getClownStamina()
   }, [appContract])
 
@@ -124,7 +124,7 @@ export const useContractClient = () => {
     appContract,
     pubClient,
     wallet,
-    shellStrength,
+    clownStamina,
     look,
     revealChaos,
     hit,

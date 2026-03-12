@@ -7,7 +7,7 @@ import { useContractClient } from '@/hooks/useContractClient'
 import { useToastNotifications } from '@/hooks/useToastNotifications'
 
 export const useGameActions = () => {
-  const [shellStrength, setShellStrength] = useState<number | null>(null)
+  const [clownStamina, setClownStamina] = useState<number | null>(null)
   const [currentRoundId] = useState<number | null>(1)
 
   const {
@@ -18,7 +18,7 @@ export const useGameActions = () => {
     reset,
     txUrl,
     waitForTransaction,
-    shellStrength: readShellStrength,
+    clownStamina: readClownStamina,
   } = useContractClient()
 
   const { notifySuccess, notifyError, notifyInfo } = useToastNotifications()
@@ -35,14 +35,14 @@ export const useGameActions = () => {
 
   const fetchGameRounds = useCallback(() => {
     if (!loaded) return
-    readShellStrength()
+    readClownStamina()
       .then((stamina) => {
-        setShellStrength(Number(stamina))
+        setClownStamina(Number(stamina))
       })
       .catch((error) => {
         console.error('Error fetching clown stamina:', error)
       })
-  }, [loaded, readShellStrength])
+  }, [loaded, readClownStamina])
 
   // Fetch initial state when contract is loaded
   useEffect(() => {
@@ -57,8 +57,8 @@ export const useGameActions = () => {
   const handleShake = async () => {
     playShake()
     if (!loaded || isShaking) return
-    if (!shellStrength) {
-      notifyError('Clown must be intact to shake')
+    if (!clownStamina) {
+      notifyError('Clown must be standing to shake')
       return
     }
     setIsShaking(true)
@@ -112,7 +112,7 @@ export const useGameActions = () => {
         } else {
           notifyInfo(`Sent punch tx: ${hash}`)
         }
-        if (shellStrength && shellStrength > 0) {
+        if (clownStamina && clownStamina > 0) {
           setPunchCount((prev) => {
             const newCount = Math.min(prev + 1, 3)
             return newCount
@@ -141,7 +141,7 @@ export const useGameActions = () => {
   const handleReset = async () => {
     playReset()
     if (!loaded || isResetting) return
-    if (shellStrength !== 0) {
+    if (clownStamina !== 0) {
       notifyError('Clown must be KO to reset')
       return
     }
@@ -184,7 +184,7 @@ export const useGameActions = () => {
   const handleLook = async () => {
     playRob()
     if (!loaded || isLooking) return
-    if (shellStrength !== 0) {
+    if (clownStamina !== 0) {
       notifyError('Clown must be KO to look')
       return
     }
@@ -203,7 +203,7 @@ export const useGameActions = () => {
 
   return {
     loaded,
-    shellStrength,
+    clownStamina,
     currentRoundId,
     isShaking,
     isHitting,
