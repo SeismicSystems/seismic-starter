@@ -37,12 +37,10 @@ const ShowClown: React.FC<ClownProps> = ({
   const clownImage = useMemo(() => {
     // If shaking, show the shaking clown image
     if (isShakingAnimation) {
-      console.log('Displaying clown_shaking.jpg (Shaking animation)')
       return '/clown_shaking.png'
     }
 
     if (isKO) {
-      console.log('Displaying clownko.jpg (Clown is KO)')
       return '/clownko.png'
     }
 
@@ -50,34 +48,20 @@ const ShowClown: React.FC<ClownProps> = ({
     switch (punchCount) {
       case 0:
         imagePath = '/clown1.png'
-        console.log('Displaying clown1.png (Punch count: 0)')
         break
       case 1:
         imagePath = '/clown2.png'
-        console.log('Displaying clown2.png (Punch count: 1)')
         break
       case 2:
       case 3:
         imagePath = '/clown3.png'
-        console.log('Displaying clown3.png (Punch count: 2-3)')
         break
       default:
         imagePath = '/clown1.png'
-        console.log('Displaying clown1.png (Default case)')
     }
 
     return imagePath
   }, [isKO, isShakingAnimation, punchCount])
-
-  // Log props for debugging - only when they change
-  useEffect(() => {
-    console.log('ShowClown props updated:', {
-      isKO,
-      isShakingAnimation,
-      isHittingAnimation,
-      punchCount,
-    })
-  }, [isKO, isShakingAnimation, isHittingAnimation, punchCount])
 
   return (
     <Box

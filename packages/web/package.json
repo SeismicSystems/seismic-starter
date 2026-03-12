@@ -22,8 +22,14 @@
     "react-dom": ">=18",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.4",
+    "@rainbow-me/rainbowkit": "^2.0.0",
+    "@tanstack/react-query": "^5.55.3",
     "react-toastify": "^11.0.5",
-    "use-sound": "^5.0.0"
+    "seismic-react": ">=1.0.38",
+    "seismic-viem": ">=1.0.38",
+    "use-sound": "^5.0.0",
+    "viem": "^2.22.3",
+    "wagmi": "^2.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
