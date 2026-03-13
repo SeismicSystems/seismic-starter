@@ -167,6 +167,7 @@ export const useGameActions = () => {
       .then((receipt) => {
         if (receipt.status === 'success') {
           notifySuccess('Reset successful')
+          setLookResult(null)
           // Re-read stamina from contract after successful reset
           fetchGameRounds()
         } else {
