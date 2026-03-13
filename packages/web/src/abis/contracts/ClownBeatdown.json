@@ -1,6 +1,6 @@
 {
-  "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
-  "chainId": 31337,
+  "address": "0x948B3c65b89DF0B4894ABE91E6D02FE579834F8F",
+  "chainId": 5124,
   "methodIdentifiers": {
     "getClownStamina()": "dcc69305",
     "hit()": "2ae3594a",
