@@ -58,7 +58,7 @@ contract ClownBeatdown {
     }
 
     // Reveal secret once the clown is down and the caller contributed.
-    function look() public view requireDown onlyContributor returns (uint256) {
+    function rob() public view requireDown onlyContributor returns (uint256) {
         return uint256(punchesUntilKo); // Return the number of punches until the clown is down.
     }
 
