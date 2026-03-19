@@ -52,12 +52,8 @@ export const useContractClient = () => {
 
   /*
     function getClownStamina() external view returns (uint256);
-    function getShellStrength() external view returns (uint256);
-    function look() external view returns (uint256);
-    function revealChaos() external view returns (uint256);
+    function rob() external view returns (string memory);
     function hit() external;
-    function shake(suint256 _numShakes) external;
-    function taunt(suint256 _numTaunts) external;
     function reset() external;
   */
 
@@ -65,31 +61,13 @@ export const useContractClient = () => {
     return appContract().tread.getClownStamina()
   }, [appContract])
 
-  const look = useCallback(async (): Promise<bigint> => {
-    return appContract().read.look()
-  }, [appContract])
-
-  const revealChaos = useCallback(async (): Promise<bigint> => {
-    return appContract().read.revealChaos()
+  const rob = useCallback(async (): Promise<string> => {
+    return appContract().read.rob()
   }, [appContract])
 
   const hit = useCallback(async (): Promise<Hex> => {
     return appContract().twrite.hit()
   }, [appContract])
-
-  const shake = useCallback(
-    async (numShakes: bigint): Promise<Hex> => {
-      return appContract().write.shake([numShakes])
-    },
-    [appContract]
-  )
-
-  const taunt = useCallback(
-    async (numTaunts: bigint): Promise<Hex> => {
-      return appContract().write.taunt([numTaunts])
-    },
-    [appContract]
-  )
 
   const reset = useCallback(async (): Promise<Hex> => {
     return appContract().twrite.reset()
@@ -125,11 +103,8 @@ export const useContractClient = () => {
     pubClient,
     wallet,
     clownStamina,
-    look,
-    revealChaos,
+    rob,
     hit,
-    shake,
-    taunt,
     reset,
     txUrl,
     addressUrl,

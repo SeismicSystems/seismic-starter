@@ -6,7 +6,7 @@ type ButtonContainerProps = {
   clownStamina: number | null
   isHitting: boolean
   isResetting: boolean
-  isLooking: boolean
+  isRobbing: boolean
   handleHit: () => void
   handleReset: () => void
   handleRob: () => void
@@ -54,7 +54,7 @@ export default function ButtonContainer({
   clownStamina,
   isHitting,
   isResetting,
-  isLooking,
+  isRobbing,
   handleHit,
   handleReset,
   handleRob,
@@ -64,7 +64,7 @@ export default function ButtonContainer({
   const [showResetActive, setShowResetActive] = useState(false)
 
   const handleRobClick = () => {
-    if (!isLooking) {
+    if (!isRobbing) {
       setShowRobActive(true)
       setTimeout(() => {
         setShowRobActive(false)
@@ -87,7 +87,7 @@ export default function ButtonContainer({
 
   const robBtn = {
     onClick: handleRobClick,
-    active: isLooking,
+    active: isRobbing,
     src: showRobActive ? '/rob_active.png' : '/rob_btn.png',
     alt: 'Rob',
     className: 'look-btn',
