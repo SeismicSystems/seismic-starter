@@ -1,11 +1,11 @@
 {
-  "address": "0x948B3c65b89DF0B4894ABE91E6D02FE579834F8F",
-  "chainId": 5124,
+  "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+  "chainId": 31337,
   "methodIdentifiers": {
     "getClownStamina()": "dcc69305",
     "hit()": "2ae3594a",
-    "rob()": "6c050eae",
-    "reset()": "d826f88f"
+    "reset()": "d826f88f",
+    "rob()": "19e96ec6"
   },
   "abi": [
     {
@@ -46,6 +46,13 @@
     },
     {
       "type": "function",
+      "name": "reset",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "rob",
       "inputs": [],
       "outputs": [
@@ -56,13 +63,6 @@
         }
       ],
       "stateMutability": "view"
-    },
-    {
-      "type": "function",
-      "name": "reset",
-      "inputs": [],
-      "outputs": [],
-      "stateMutability": "nonpayable"
     },
     {
       "type": "event",

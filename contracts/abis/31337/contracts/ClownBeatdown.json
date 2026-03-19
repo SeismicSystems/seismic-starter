@@ -4,9 +4,8 @@
   "methodIdentifiers": {
     "getClownStamina()": "dcc69305",
     "hit()": "2ae3594a",
-    "look()": "6c050eae",
     "reset()": "d826f88f",
-    "shake(suint256)": "2c98d3cc"
+    "rob()": "19e96ec6"
   },
   "abi": [
     {
@@ -18,9 +17,9 @@
           "internalType": "uint256"
         },
         {
-          "name": "_punchesUntilKo",
-          "type": "suint256",
-          "internalType": "suint256"
+          "name": "_secrets",
+          "type": "string[]",
+          "internalType": "string[]"
         }
       ],
       "stateMutability": "nonpayable"
@@ -47,19 +46,6 @@
     },
     {
       "type": "function",
-      "name": "look",
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "view"
-    },
-    {
-      "type": "function",
       "name": "reset",
       "inputs": [],
       "outputs": [],
@@ -67,16 +53,16 @@
     },
     {
       "type": "function",
-      "name": "shake",
-      "inputs": [
+      "name": "rob",
+      "inputs": [],
+      "outputs": [
         {
-          "name": "_numShakes",
-          "type": "suint256",
-          "internalType": "suint256"
+          "name": "",
+          "type": "string",
+          "internalType": "string"
         }
       ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
+      "stateMutability": "view"
     },
     {
       "type": "event",
@@ -118,25 +104,6 @@
           "type": "uint256",
           "indexed": false,
           "internalType": "uint256"
-        }
-      ],
-      "anonymous": false
-    },
-    {
-      "type": "event",
-      "name": "Shake",
-      "inputs": [
-        {
-          "name": "round",
-          "type": "uint256",
-          "indexed": true,
-          "internalType": "uint256"
-        },
-        {
-          "name": "shaker",
-          "type": "address",
-          "indexed": true,
-          "internalType": "address"
         }
       ],
       "anonymous": false
