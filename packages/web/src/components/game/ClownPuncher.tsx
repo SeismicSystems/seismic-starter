@@ -29,14 +29,14 @@ const ClownPuncher: React.FC = () => {
     clownStamina,
     isHitting,
     isResetting,
-    isLooking,
-    lookResult,
+    isRobbing,
+    robResult,
     punchCount,
     fetchGameRounds,
     resetGameState,
     handleHit,
     handleReset,
-    handleLook,
+    handleRob,
   } = useGameActions()
 
   useEffect(() => {
@@ -68,10 +68,10 @@ const ClownPuncher: React.FC = () => {
 
   // Show splash screen when lookResult changes to a non-null value
   useEffect(() => {
-    if (lookResult !== null) {
+    if (robResult !== null) {
       setShowSecretSplash(true)
     }
-  }, [lookResult])
+  }, [robResult])
 
   // If not showing the game yet, show entry screen
   if (!showGame) {
@@ -83,17 +83,17 @@ const ClownPuncher: React.FC = () => {
       setShowRobRefused(true)
       return
     }
-    handleLook()
+    handleRob()
   }
 
   const buttonProps = {
     clownStamina,
     isHitting,
     isResetting,
-    isLooking,
+    isRobbing,
     handleHit,
     handleReset,
-    handleRob: onRob,
+    handleRob,
   } as const
 
   return (
@@ -132,13 +132,13 @@ const ClownPuncher: React.FC = () => {
           zIndex: (theme) => theme.zIndex.drawer + 1,
           backgroundColor: 'rgba(0, 0, 0, 0.85)',
         }}
-        open={(showSecretSplash && lookResult !== null) || showRobRefused}
+        open={(showSecretSplash && robResult !== null) || showRobRefused}
         onClick={() => {
           setShowSecretSplash(false)
           setShowRobRefused(false)
         }}
       >
-        <Fade in={(showSecretSplash && lookResult !== null) || showRobRefused}>
+        <Fade in={(showSecretSplash && robResult !== null) || showRobRefused}>
           <Box
             sx={{
               backgroundColor: 'background.paper',
@@ -186,7 +186,7 @@ const ClownPuncher: React.FC = () => {
                   color="white"
                   gutterBottom
                 >
-                  {lookResult?.toString()}
+                  {robResult}
                 </Typography>
               </>
             )}

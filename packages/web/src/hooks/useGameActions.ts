@@ -13,8 +13,7 @@ export const useGameActions = () => {
   const {
     loaded,
     hit,
-    look,
-    shake,
+    rob,
     reset,
     txUrl,
     waitForTransaction,
@@ -22,14 +21,12 @@ export const useGameActions = () => {
   } = useContractClient()
 
   const { notifySuccess, notifyError, notifyInfo } = useToastNotifications()
-  const [isShaking, setIsShaking] = useState(false)
   const [isHitting, setIsHitting] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
-  const [isLooking, setIsLooking] = useState(false)
-  const [lookResult, setLookResult] = useState<bigint | null>(null)
+  const [isRobbing, setIsRobbing] = useState(false)
+  const [robResult, setRobResult] = useState<string | null>(null)
   const [punchCount, setPunchCount] = useState(0)
   const [playHit] = useSound('/audio/hit_sfx.wav', { volume: 0.1 })
-  const [playShake] = useSound('/audio/shake_sfx.wav', { volume: 0.1 })
   const [playReset] = useSound('/audio/reset_sfx.wav', { volume: 0.1 })
   const [playRob] = useSound('/audio/rob_sfx.wav', { volume: 0.1 })
 
@@ -50,49 +47,9 @@ export const useGameActions = () => {
   }, [fetchGameRounds])
 
   const resetGameState = useCallback(() => {
-    setLookResult(null)
+    setRobResult(null)
     setPunchCount(0)
   }, [punchCount])
-
-  const handleShake = async () => {
-    playShake()
-    if (!loaded || isShaking) return
-    if (!clownStamina) {
-      notifyError('Clown must be standing to shake')
-      return
-    }
-    setIsShaking(true)
-    shake(1n)
-      .then((hash) => {
-        const url = txUrl(hash)
-        if (url) {
-          notifyInfo(
-            React.createElement(ExplorerToast, {
-              url: url,
-              text: 'Sent shake tx: ',
-              hash: hash,
-            })
-          )
-        } else {
-          notifyInfo(`Sent shake tx: ${hash}`)
-        }
-        setIsShaking(false)
-        return waitForTransaction(hash)
-      })
-      .then((receipt) => {
-        if (receipt.status === 'success') {
-          notifySuccess('Shake successful')
-        } else {
-          notifyError('Shake failed')
-        }
-      })
-      .catch((error) => {
-        notifyError('Error shaking clown: ', error.message)
-      })
-      .finally(() => {
-        setIsShaking(false)
-      })
-  }
 
   const handleHit = async () => {
     playHit()
@@ -167,7 +124,7 @@ export const useGameActions = () => {
       .then((receipt) => {
         if (receipt.status === 'success') {
           notifySuccess('Reset successful')
-          setLookResult(null)
+          setRobResult(null)
           // Re-read stamina from contract after successful reset
           fetchGameRounds()
         } else {
@@ -182,19 +139,19 @@ export const useGameActions = () => {
       })
   }
 
-  const handleLook = async () => {
+  const handleRob = async () => {
     playRob()
-    if (!loaded || isLooking) return
-    setIsLooking(true)
-    look()
+    if (!loaded || isRobbing) return
+    setIsRobbing(true)
+    rob()
       .then((result) => {
-        setLookResult(result)
+        setRobResult(result)
       })
       .catch((error) => {
-        notifyError('Error looking at clown: ', error.message)
+        notifyError('Error robbing clown: ', error.message)
       })
       .finally(() => {
-        setIsLooking(false)
+        setIsRobbing(false)
       })
   }
 
@@ -202,17 +159,15 @@ export const useGameActions = () => {
     loaded,
     clownStamina,
     currentRoundId,
-    isShaking,
     isHitting,
     isResetting,
-    isLooking,
-    lookResult,
+    isRobbing,
+    robResult,
     punchCount,
     fetchGameRounds,
     resetGameState,
-    handleShake,
     handleHit,
     handleReset,
-    handleLook,
+    handleRob,
   }
 }

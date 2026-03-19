@@ -6,8 +6,8 @@ contract ClownBeatdown {
     uint256 clownStamina; // Remaining stamina before the clown is down.
     uint256 round; // The current round number.
 
-    suint256 initialPunchesUntilKo; // Starting number of punches until the clown is down restored on reset.
-    suint256 punchesUntilKo; // The current number of punches until the clown is down.
+    string[] secrets; // Pool of possible secrets.
+    suint256 secretIndex; // Shielded index into the secrets array.
 
     // Tracks the number of hits per player per round.
     mapping(uint256 => mapping(address => uint256)) hitsPerRound;
@@ -19,12 +19,13 @@ contract ClownBeatdown {
     // Event to log resets.
     event Reset(uint256 indexed newRound, uint256 remainingClownStamina);
 
-    constructor(uint256 _clownStamina, suint256 _punchesUntilKo) {
+    constructor(uint256 _clownStamina, string[] memory _secrets) {
+        require(_secrets.length > 0, "NEED_AT_LEAST_ONE_SECRET");
         initialClownStamina = _clownStamina; // Set starting stamina.
         clownStamina = _clownStamina; // Initialize remaining stamina.
 
-        initialPunchesUntilKo = _punchesUntilKo; // Set starting number of punches until the clown is down.
-        punchesUntilKo = _punchesUntilKo; // Initialize number of punches until the clown is down.
+        secrets = _secrets; // Store the pool of secrets.
+        secretIndex = suint256(_randomIndex()); // Pick a random secret.
 
         round = 1; // Start with the first round.
     }
@@ -45,14 +46,19 @@ contract ClownBeatdown {
     // Reset the beatdown for a new round.
     function reset() public requireDown {
         clownStamina = initialClownStamina; // Reset stamina.
-        punchesUntilKo = initialPunchesUntilKo; // Reset number of punches until the clown is down.
+        secretIndex = suint256(_randomIndex()); // Pick a new random secret.
         round++; // Move to the next round.
         emit Reset(round, clownStamina); // Log the reset.
     }
 
     // Reveal secret once the clown is down and the caller contributed.
-    function rob() public view requireDown onlyContributor returns (uint256) {
-        return uint256(punchesUntilKo); // Return the number of punches until the clown is down.
+    function rob() public view requireDown onlyContributor returns (string memory) {
+        return secrets[uint256(secretIndex)]; // Return the randomly selected secret.
+    }
+
+    // Generate a pseudo-random index into the secrets array.
+    function _randomIndex() private view returns (uint256) {
+        return uint256(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, round))) % secrets.length;
     }
 
     // Modifier to ensure the clown is down.
