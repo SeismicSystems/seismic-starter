@@ -93,7 +93,7 @@ const ClownPuncher: React.FC = () => {
     isRobbing,
     handleHit,
     handleReset,
-    handleRob,
+    handleRob: onRob,
   } as const
 
   return (
