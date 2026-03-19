@@ -16,8 +16,6 @@ contract ClownBeatdown {
 
     // Event to log hits.
     event Hit(uint256 indexed round, address indexed hitter, uint256 remaining); // Logged when a hit lands.
-    // Event to log shakes.
-    event Shake(uint256 indexed round, address indexed shaker); // Logged when the clown is shaken  .
     // Event to log resets.
     event Reset(uint256 indexed newRound, uint256 remainingClownStamina);
 
@@ -43,12 +41,7 @@ contract ClownBeatdown {
         emit Hit(round, msg.sender, clownStamina); // Log the hit.
     }
 
-    // Shake the clown .
-    function shake(suint256 _numShakes) public requireStanding {
-        punchesUntilKo += _numShakes; // Increment number of punches until the clown is down.
-        emit Shake(round, msg.sender); // Log the shake.
-    }
-
+    
     // Reset the beatdown for a new round.
     function reset() public requireDown {
         clownStamina = initialClownStamina; // Reset stamina.
