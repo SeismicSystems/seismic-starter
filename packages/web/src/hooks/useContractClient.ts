@@ -63,7 +63,7 @@ export const useContractClient = () => {
 
   const rob = useCallback(async (): Promise<string> => {
     const result = (await appContract().read.rob()) as Hex
-    return hexToString(result, { size: 32 })
+    return hexToString(result)
   }, [appContract])
 
   const hit = useCallback(async (): Promise<Hex> => {

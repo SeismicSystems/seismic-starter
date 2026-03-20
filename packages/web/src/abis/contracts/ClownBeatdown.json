@@ -15,13 +15,21 @@
           "name": "_clownStamina",
           "type": "uint256",
           "internalType": "uint256"
-        },
-        {
-          "name": "_secrets",
-          "type": "string[]",
-          "internalType": "string[]"
         }
       ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "addSecret",
+      "inputs": [
+        {
+          "name": "_secret",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "outputs": [],
       "stateMutability": "nonpayable"
     },
     {
@@ -58,8 +66,8 @@
       "outputs": [
         {
           "name": "",
-          "type": "bytes32",
-          "internalType": "bytes32"
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
       "stateMutability": "view"
