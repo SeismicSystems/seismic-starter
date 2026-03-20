@@ -6,8 +6,9 @@ contract ClownBeatdown {
     uint256 clownStamina; // Remaining stamina before the clown is down.
     uint256 round; // The current round number.
 
-    string[] secrets; // Pool of possible secrets.
-    suint256 secretIndex; // Shielded index into the secrets array.
+    mapping(uint256 => sbytes32) secrets; // Pool of possible secrets (shielded).
+    uint256 secretsCount; // Number of secrets for modular arithmetic.
+    suint256 secretIndex; // Shielded index into the secrets mapping.
 
     // Tracks the number of hits per player per round.
     mapping(uint256 => mapping(address => uint256)) hitsPerRound;
@@ -24,7 +25,10 @@ contract ClownBeatdown {
         initialClownStamina = _clownStamina; // Set starting stamina.
         clownStamina = _clownStamina; // Initialize remaining stamina.
 
-        secrets = _secrets; // Store the pool of secrets.
+        for (uint256 i = 0; i < _secrets.length; i++) {
+            secrets[i] = sbytes32(bytes32(bytes(_secrets[i])));
+        }
+        secretsCount = _secrets.length;
         secretIndex = suint256(_randomIndex()); // Pick a random secret.
 
         round = 1; // Start with the first round.
@@ -52,13 +56,13 @@ contract ClownBeatdown {
     }
 
     // Reveal secret once the clown is down and the caller contributed.
-    function rob() public view requireDown onlyContributor returns (string memory) {
-        return secrets[uint256(secretIndex)]; // Return the randomly selected secret.
+    function rob() public view requireDown onlyContributor returns (bytes32) {
+        return bytes32(secrets[uint256(secretIndex)]); // Return the randomly selected secret.
     }
 
     // Generate a pseudo-random index into the secrets array.
     function _randomIndex() private view returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, round))) % secrets.length;
+        return uint256(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, round))) % secretsCount;
     }
 
     // Modifier to ensure the clown is down.

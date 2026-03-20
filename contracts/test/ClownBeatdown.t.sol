@@ -24,11 +24,11 @@ contract ClownBeatdownTest is Test {
         clownBeatdown.hit();
         clownBeatdown.hit();
         // rob() should return one of the secrets
-        string memory secret = clownBeatdown.rob();
+        bytes32 secret = clownBeatdown.rob();
         assertTrue(
-            keccak256(bytes(secret)) == keccak256(bytes("Secret A")) ||
-            keccak256(bytes(secret)) == keccak256(bytes("Secret B")) ||
-            keccak256(bytes(secret)) == keccak256(bytes("Secret C"))
+            secret == bytes32(bytes("Secret A")) ||
+            secret == bytes32(bytes("Secret B")) ||
+            secret == bytes32(bytes("Secret C"))
         );
     }
 
@@ -43,24 +43,24 @@ contract ClownBeatdownTest is Test {
         // Knock out and rob in round 1
         clownBeatdown.hit();
         clownBeatdown.hit();
-        string memory secret1 = clownBeatdown.rob();
+        bytes32 secret1 = clownBeatdown.rob();
 
         // Reset and knock out again in round 2
         clownBeatdown.reset();
         clownBeatdown.hit();
         clownBeatdown.hit();
-        string memory secret2 = clownBeatdown.rob();
+        bytes32 secret2 = clownBeatdown.rob();
 
         // Both should be valid secrets (they may or may not differ depending on randomness)
         assertTrue(
-            keccak256(bytes(secret1)) == keccak256(bytes("Secret A")) ||
-            keccak256(bytes(secret1)) == keccak256(bytes("Secret B")) ||
-            keccak256(bytes(secret1)) == keccak256(bytes("Secret C"))
+            secret1 == bytes32(bytes("Secret A")) ||
+            secret1 == bytes32(bytes("Secret B")) ||
+            secret1 == bytes32(bytes("Secret C"))
         );
         assertTrue(
-            keccak256(bytes(secret2)) == keccak256(bytes("Secret A")) ||
-            keccak256(bytes(secret2)) == keccak256(bytes("Secret B")) ||
-            keccak256(bytes(secret2)) == keccak256(bytes("Secret C"))
+            secret2 == bytes32(bytes("Secret A")) ||
+            secret2 == bytes32(bytes("Secret B")) ||
+            secret2 == bytes32(bytes("Secret C"))
         );
     }
 
@@ -95,8 +95,8 @@ contract ClownBeatdownTest is Test {
         clownBeatdown.rob();
 
         // Original contributor can still rob
-        string memory secret = clownBeatdown.rob();
-        assertTrue(bytes(secret).length > 0);
+        bytes32 secret = clownBeatdown.rob();
+        assertTrue(secret != bytes32(0));
     }
 
     function test_ContributorInRound2() public {
@@ -105,8 +105,8 @@ contract ClownBeatdownTest is Test {
         // Round 1: knocked out by address(this)
         clownBeatdown.hit();
         clownBeatdown.hit();
-        string memory secret1 = clownBeatdown.rob();
-        assertTrue(bytes(secret1).length > 0);
+        bytes32 secret1 = clownBeatdown.rob();
+        assertTrue(secret1 != bytes32(0));
 
         // Reset for round 2
         clownBeatdown.reset();
@@ -119,8 +119,8 @@ contract ClownBeatdownTest is Test {
 
         // contributorRound2 can rob in round 2
         vm.prank(contributorRound2);
-        string memory secret2 = clownBeatdown.rob();
-        assertTrue(bytes(secret2).length > 0);
+        bytes32 secret2 = clownBeatdown.rob();
+        assertTrue(secret2 != bytes32(0));
 
         // address(this) cannot rob in round 2 (not a contributor this round)
         vm.expectRevert("NOT_A_CONTRIBUTOR");

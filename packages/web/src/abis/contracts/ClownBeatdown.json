@@ -58,8 +58,8 @@
       "outputs": [
         {
           "name": "",
-          "type": "string",
-          "internalType": "string"
+          "type": "bytes32",
+          "internalType": "bytes32"
         }
       ],
       "stateMutability": "view"
