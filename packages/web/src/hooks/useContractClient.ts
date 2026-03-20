@@ -6,7 +6,7 @@ import {
   addressExplorerUrl,
   txExplorerUrl,
 } from 'seismic-viem'
-import type { Hex } from 'viem'
+import { type Hex, hexToString } from 'viem'
 
 import { useAppContract } from './useContract'
 
@@ -52,7 +52,7 @@ export const useContractClient = () => {
 
   /*
     function getClownStamina() external view returns (uint256);
-    function rob() external view returns (string memory);
+    function rob() external view returns (bytes32);
     function hit() external;
     function reset() external;
   */
@@ -62,7 +62,8 @@ export const useContractClient = () => {
   }, [appContract])
 
   const rob = useCallback(async (): Promise<string> => {
-    return appContract().read.rob()
+    const result = (await appContract().read.rob()) as Hex
+    return hexToString(result)
   }, [appContract])
 
   const hit = useCallback(async (): Promise<Hex> => {
