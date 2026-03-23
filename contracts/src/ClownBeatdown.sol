@@ -44,7 +44,7 @@ contract ClownBeatdown {
         emit Hit(round, msg.sender, clownStamina); // Log the hit.
     }
 
-    
+
     // Reset the beatdown for a new round.
     function reset() public requireDown {
         clownStamina = initialClownStamina; // Reset stamina.
@@ -55,6 +55,10 @@ contract ClownBeatdown {
 
     // Reveal secret once the clown is down and the caller contributed.
     function rob() public view requireDown onlyContributor returns (bytes memory) {
+        /* code that works:
+        sbytes memory secret = secrets[uint256(secretIndex)];
+        return bytes(secret);
+        */
         return bytes(secrets[uint256(secretIndex)]); // Return the randomly selected secret.
     }
 
