@@ -54,9 +54,8 @@ contract ClownBeatdown {
     }
 
     // Reveal secret once the clown is down and the caller contributed.
- function rob() public view requireDown onlyContributor returns (bytes memory) {
-        sbytes memory secret = secrets[uint256(secretIndex)];
-        return bytes(secret); // Return the randomly selected secret.
+    function rob() public view requireDown onlyContributor returns (bytes memory) {
+        return bytes(secrets[uint256(secretIndex)]); // Return the randomly selected secret.
     }
 
     // Generate a pseudo-random index into the secrets array.
