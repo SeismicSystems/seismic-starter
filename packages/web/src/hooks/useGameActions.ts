@@ -37,7 +37,8 @@ export const useGameActions = () => {
         setClownStamina(Number(stamina))
       })
       .catch((error) => {
-        console.error('Error fetching clown stamina:', error)
+        const message = error instanceof Error ? error.message : String(error)
+        console.error('Error fetching clown stamina:', message)
       })
   }, [loaded, readClownStamina])
 
@@ -75,7 +76,6 @@ export const useGameActions = () => {
             return newCount
           })
         }
-        setIsHitting(false)
         return waitForTransaction(hash)
       })
       .then((receipt) => {
@@ -88,7 +88,8 @@ export const useGameActions = () => {
         }
       })
       .catch((error) => {
-        notifyError('Error punching clown: ', error.message)
+        const message = error instanceof Error ? error.message : String(error)
+        notifyError(`Error punching clown: ${message}`)
       })
       .finally(() => {
         setIsHitting(false)
@@ -118,7 +119,6 @@ export const useGameActions = () => {
           notifyInfo(`Sent reset tx: ${hash}`)
         }
         setPunchCount(0)
-        setIsResetting(false)
         return waitForTransaction(hash)
       })
       .then((receipt) => {
@@ -132,7 +132,8 @@ export const useGameActions = () => {
         }
       })
       .catch((error) => {
-        notifyError('Error resetting clown: ', error.message)
+        const message = error instanceof Error ? error.message : String(error)
+        notifyError(`Error resetting clown: ${message}`)
       })
       .finally(() => {
         setIsResetting(false)
@@ -148,7 +149,8 @@ export const useGameActions = () => {
         setRobResult(result)
       })
       .catch((error) => {
-        notifyError('Error robbing clown: ', error.message)
+        const message = error instanceof Error ? error.message : String(error)
+        notifyError(`Error robbing clown: ${message}`)
       })
       .finally(() => {
         setIsRobbing(false)
