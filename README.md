@@ -1,36 +1,61 @@
-# Walnut Starter Project
-
-![walnut banner](assets/walnut_banner.png)
+# Clown Beatdown
 
 ### Overview
 
-A good example to get you started with using `stype`. The app is centered around
-a walnut with a secret number inside.
+A Seismic starter project demonstrating **shielded smart contracts**. Players beat down a clown by calling `hit()` to reduce its stamina (starts at 3). Once the clown is knocked out, any contributor can call `rob()` to reveal a randomly selected shielded secret. Anyone can then call `reset()` to start a new round.
 
-Every time you shake the walnut, this number increments. Every time you hit the
-walnut, the shell gets closer to cracking. You can only look at the number once
-the shell is cracked.
+The contract uses Seismic's shielded types (`sbytes`, `suint256`) to keep secrets encrypted on-chain until they're revealed through gameplay.
 
-### Local Development
+### Project Structure
 
-#### Prerequisites
-Make sure you have the `seismic-foundry` suite of dev tools installed. See the installation instructions [here](https://docs.seismic.systems/onboarding/publish-your-docs).
+```
+├── contracts/          # Solidity smart contracts (sforge)
+├── packages/
+│   ├── web/            # Frontend application
+│   ├── cli/            # CLI client
+│   └── processes/      # Local dev process orchestration
+```
 
+### Prerequisites
 
-#### Installing dependencies
-Make sure you have [bun](https://bun.sh/docs/installation) installed.
-Install the dependencies for the project by running:
+- [Bun](https://bun.sh/docs/installation)
+- [seismic-foundry](https://docs.seismic.systems/onboarding/publish-your-docs) dev tools (`sforge`, `sanvil`)
+
+### Getting Started
+
+Install dependencies from the root directory:
 
 ```bash
 bun install
 ```
-from the root directory.
 
-#### Setting up the contracts
+Start local development (launches `sanvil`, deploys contracts, and starts the web app):
 
-Go to the [`contracts` directory](contracts/) and follow the instructions in the [`contracts` README](contracts/README.md) to set up the `Walnut` contract.
+```bash
+bun run dev:local
+```
 
-#### Setting up and running the CLI
+To reset all local state and start fresh:
 
-Then, go to the [`cli` directory](packages/cli/) and follow the instructions in the [`cli` README](packages/cli/README.md) to set up and run the CLI.
+```bash
+bun run dev:local:reset
+```
 
+### Development Scripts
+
+| Script            | Description                                            |
+| ----------------- | ------------------------------------------------------ |
+| `dev:local`       | Full local dev environment                             |
+| `dev:local:reset` | Full local dev environment with clean state            |
+| `anvil:new`       | Start a fresh `sanvil` instance with state persistence |
+| `anvil:state`     | Start `sanvil` loading existing state                  |
+| `web:dev`         | Run the web frontend in dev mode                       |
+| `web:build`       | Build the web frontend                                 |
+| `contract:build`  | Compile contracts with `sforge`                        |
+| `contract:deploy` | Deploy contracts to the configured network             |
+| `contract:clean`  | Remove build artifacts                                 |
+
+### Sub-packages
+
+- **Contracts** — deployment and testing instructions: [`contracts/README.md`](contracts/README.md)
+- **CLI** — command-line client: [`packages/cli/README.md`](packages/cli/README.md)

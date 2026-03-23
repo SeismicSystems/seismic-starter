@@ -14,6 +14,7 @@ cp .env.example .env
 ```
 
 3. Ensure contract tests are passing. From this directory, run
+
 ```bash
 sforge build
 sforge test
@@ -23,7 +24,7 @@ sforge test
 
 ```bash
 source .env
-sforge script script/Walnut.s.sol:WalnutScript \
+sforge script script/ClownBeatdown.s.sol:ClownBeatdownScript \
       --rpc-url $RPC_URL \
       --broadcast
 ```
