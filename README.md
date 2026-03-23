@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.png" alt="Clown Beatdown" width="400" />
+</p>
+
 # Clown Beatdown
 
 ### Overview
