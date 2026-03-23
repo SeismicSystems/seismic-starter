@@ -54,11 +54,8 @@ contract ClownBeatdown {
     }
 
     // Reveal secret once the clown is down and the caller contributed.
-    // ** POSSIBLE BUG IN SOLIDITY **
-    // the cast only works if the lines are split, if you try to cast this in a one liner the tests will fail.  
     function rob() public view requireDown onlyContributor returns (bytes memory) {
-        sbytes memory secret = secrets[uint256(secretIndex)];
-        return bytes(secret); // Return the randomly selected secret.
+        return bytes(secrets[uint256(secretIndex)]); // Return the randomly selected secret.
     }
 
     // Generate a pseudo-random index into the secrets array.
