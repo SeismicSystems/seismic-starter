@@ -44,7 +44,7 @@ contract ClownBeatdown {
         emit Hit(round, msg.sender, clownStamina); // Log the hit.
     }
 
-    
+
     // Reset the beatdown for a new round.
     function reset() public requireDown {
         clownStamina = initialClownStamina; // Reset stamina.
