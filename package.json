@@ -13,7 +13,7 @@
     "web:lint": "bun run --cwd ./packages/web lint",
     "web:preview": "bun run --cwd ./packages/web preview",
     "contract:clean": "bun run --cwd ./contracts sforge clean && bun run --cwd ./contracts rimraf broadcast/ cache/ out/",
-    "contract:deploy": "source .env && VITE_CHAIN_ID=$VITE_CHAIN_ID bun contract:dev && DEPLOYER_PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY bun run --cwd ./contracts sforge script script/ClownBeatdown.s.sol --rpc-url $RPC_URL --broadcast && VITE_CHAIN_ID=$VITE_CHAIN_ID bun contract:addresses",
+    "contract:deploy": "source .env && VITE_CHAIN_ID=$VITE_CHAIN_ID bun contract:dev && PRIVKEY=${DEPLOYER_PRIVATE_KEY:-$PRIVKEY} bun run --cwd ./contracts sforge script script/ClownBeatdown.s.sol --rpc-url $RPC_URL --broadcast --skip-simulation && VITE_CHAIN_ID=$VITE_CHAIN_ID bun contract:addresses",
     "contract:dev": "bun contract:build && source .env && VITE_CHAIN_ID=$VITE_CHAIN_ID bun contract:abis",
     "contract:build": "bun run --cwd ./contracts sforge build",
     "contract:abis:copy": "source .env && VITE_CHAIN_ID=$VITE_CHAIN_ID bun contract:abis:cp",
