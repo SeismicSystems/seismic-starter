@@ -10,15 +10,13 @@ contract ClownBeatdownScript is Script {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVKEY");
 
-        string[] memory secrets = new string[](5);
-        secrets[0] = "The moon is made of cheese";
-        secrets[1] = "Clowns rule the underworld";
-        secrets[2] = "The cake is a lie";
-        secrets[3] = "42 is the answer";
-        secrets[4] = "Never trust a smiling clown";
-
         vm.startBroadcast(deployerPrivateKey);
-        clownBeatdown = new ClownBeatdown(3, secrets);
+        clownBeatdown = new ClownBeatdown(3);
+        clownBeatdown.addSecret("The moon is made of cheese");
+        clownBeatdown.addSecret("Clowns rule the underworld");
+        clownBeatdown.addSecret("The cake is a lie");
+        clownBeatdown.addSecret("42 is the answer");
+        clownBeatdown.addSecret("Never trust a smiling clown");
         vm.stopBroadcast();
     }
 }
