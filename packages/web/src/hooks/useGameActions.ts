@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import React from 'react'
 import { useSound } from 'use-sound'
+import type { Abi } from 'viem'
 
+import * as contractJson from '@/abis/contracts/ClownBeatdown.json' with { type: 'json' }
 import { ExplorerToast } from '@/components/chain/ExplorerToast'
 import { useContractClient } from '@/hooks/useContractClient'
+import { useMultiplayerSync } from '@/hooks/useMultiplayerSync'
 import { useToastNotifications } from '@/hooks/useToastNotifications'
 
 export const useGameActions = () => {
@@ -12,6 +15,8 @@ export const useGameActions = () => {
 
   const {
     loaded,
+    publicClient,
+    walletClient,
     hit,
     rob,
     reset,
@@ -46,6 +51,25 @@ export const useGameActions = () => {
   useEffect(() => {
     fetchGameRounds()
   }, [fetchGameRounds])
+
+  // Listen for other players' actions via on-chain events
+  const userAddress = walletClient?.account?.address ?? null
+  useMultiplayerSync({
+    publicClient,
+    contractAddress: contractJson.address as `0x${string}`,
+    abi: contractJson.abi as Abi,
+    userAddress,
+    onStaminaChange: useCallback(
+      (stamina: number) => setClownStamina(stamina),
+      []
+    ),
+    onReset: useCallback((stamina: number) => {
+      setClownStamina(stamina)
+      setRobResult(null)
+      setPunchCount(0)
+    }, []),
+    enabled: loaded,
+  })
 
   const resetGameState = useCallback(() => {
     setRobResult(null)
