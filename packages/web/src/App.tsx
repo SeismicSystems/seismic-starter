@@ -1,11 +1,10 @@
 import React from 'react'
 import { PropsWithChildren, useCallback } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import {
-  type OnAddressChangeParams,
-  ShieldedWalletProvider,
-} from 'seismic-react'
+import { ShieldedWalletProvider } from 'seismic-react'
 import { sanvil, seismicTestnet } from 'seismic-react/rainbowkit'
+import { type ShieldedPublicClient } from 'seismic-viem'
+import type { Hex } from 'viem'
 import { http } from 'viem'
 import { Config, WagmiProvider } from 'wagmi'
 
@@ -17,6 +16,11 @@ import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import './App.css'
+
+type OnAddressChangeParams = {
+  publicClient: ShieldedPublicClient
+  address: Hex
+}
 
 const configuredChainId = String(import.meta.env.VITE_CHAIN_ID ?? '')
 const isSanvilConfig =
@@ -42,7 +46,7 @@ const Providers: React.FC<PropsWithChildren<{ config: Config }>> = ({
   const publicTransport = http(publicChain.rpcUrls.default.http[0])
   const handleAddressChange = useCallback(
     async ({ publicClient, address }: OnAddressChangeParams) => {
-      if (publicClient.chain.id !== sanvil.id) return
+      if (publicClient.chain?.id !== sanvil.id) return
 
       const existingBalance = await publicClient.getBalance({ address })
       if (existingBalance > 0n) return
