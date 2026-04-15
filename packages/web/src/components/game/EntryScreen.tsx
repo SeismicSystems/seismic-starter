@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import { Box, Container } from '@mui/material'
 
-import { useAuth } from '../chain/WalletConnectButton'
+import { useAuth } from '../chain/auth-context'
 
 type EntryScreenProps = {
   onEnter: () => void
