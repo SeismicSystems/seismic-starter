@@ -52,6 +52,9 @@ cat > .env.local-anvil <<'EOF'
 # frontend
 VITE_CHAIN_ID=31337
 VITE_FAUCET_URL=https://faucet-2.seismicdev.net/
+VITE_WALLET_PROVIDER=walletconnect
+# Required only when VITE_WALLET_PROVIDER=privy
+# VITE_PRIVY_APP_ID=your-privy-app-id
 
 # chain
 RPC_URL=http://127.0.0.1:8545
@@ -84,6 +87,15 @@ http://localhost:5173
 ## Network and Wallet Notes
 
 - The app is configured for local `sanvil` when `VITE_CHAIN_ID=31337` (or `sanvil`).
+- Frontend RPC is read from `VITE_RPC_URL` (used by both WalletConnect and Privy).
+- Select wallet integration with `VITE_WALLET_PROVIDER`:
+  - `walletconnect` (default): RainbowKit / WalletConnect modal.
+  - `privy`: Privy auth + wallet flow (requires `VITE_PRIVY_APP_ID`).
+    - This starter is configured for Twitter login in Privy mode.
+    - Ensure Twitter is enabled as a login method in your Privy dashboard for the same app ID.
+    - An embedded Ethereum wallet is auto-created on first login for users without wallets.
+- `bun run dev:local` and `bun run dev:local:reset` always copy `.env.local-anvil` into `.env`, which points to local `sanvil`.
+- To target production RPC, update `.env` with production `VITE_CHAIN_ID` + `VITE_RPC_URL`, then run `bun run web:dev` (not `dev:local`).
 - On local Anvil, the app auto-funds the shielded wallet address to avoid insufficient-funds errors during onboarding.
 - If MetaMask and app balances differ, reconnect wallet after startup and ensure chain is `31337`.
 

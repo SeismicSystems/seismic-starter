@@ -1,24 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
+import React from 'react'
 
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
 
-// Create authentication context
-type AuthContextType = {
-  isAuthenticated: boolean
-  isLoading: boolean
-  openConnectModal: () => void
-  accountName?: string
-}
-
-const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  isLoading: true,
-  openConnectModal: () => {},
-})
-
-export const useAuth = () => useContext(AuthContext)
+import { useAuth } from '@/components/chain/auth-context'
+import { isPrivyWalletProvider } from '@/config/walletMode'
 
 // Wallet icon component using SVG for better quality
 const WalletIcon = () => (
@@ -44,36 +29,7 @@ const WalletButton: React.FC<
   )
 }
 
-export const AuthProvider: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
-  const { openConnectModal } = useConnectModal() || {
-    openConnectModal: () => {},
-  }
-  const { address, isConnecting, isConnected, isDisconnected } = useAccount()
-  const [authState, setAuthState] = useState<AuthContextType>({
-    isAuthenticated: false,
-    isLoading: true,
-    openConnectModal: openConnectModal || (() => {}),
-  })
-
-  useEffect(() => {
-    setAuthState({
-      isAuthenticated: isConnected,
-      isLoading: isConnecting,
-      openConnectModal: openConnectModal || (() => {}),
-      accountName: address
-        ? `${address.slice(0, 6)}...${address.slice(-4)}`
-        : undefined,
-    })
-  }, [isConnected, isConnecting, isDisconnected, address, openConnectModal])
-
-  return (
-    <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
-  )
-}
-
-const WalletConnectButton = () => {
+const RainbowKitWalletButton = () => {
   return (
     <ConnectButton.Custom>
       {({
@@ -110,7 +66,7 @@ const WalletConnectButton = () => {
         }
         return (
           <WalletButton onClick={openAccountModal}>
-            <span className="">
+            <span>
               <WalletIcon />
             </span>
           </WalletButton>
@@ -118,6 +74,47 @@ const WalletConnectButton = () => {
       }}
     </ConnectButton.Custom>
   )
+}
+
+const PrivyWalletButton = () => {
+  const {
+    isAuthenticated,
+    isLoading,
+    openConnectModal,
+    openWalletModal,
+    accountName,
+  } = useAuth()
+
+  if (isLoading) {
+    return <></>
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <WalletButton onClick={openConnectModal}>
+        <span className="md:inline hidden">CONNECT WALLET</span>
+        <span className="md:hidden">
+          <WalletIcon />
+        </span>
+      </WalletButton>
+    )
+  }
+
+  return (
+    <WalletButton onClick={openWalletModal} title={accountName}>
+      <span>
+        <WalletIcon />
+      </span>
+    </WalletButton>
+  )
+}
+
+const WalletConnectButton = () => {
+  if (isPrivyWalletProvider) {
+    return <PrivyWalletButton />
+  }
+
+  return <RainbowKitWalletButton />
 }
 
 export default WalletConnectButton

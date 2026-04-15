@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { useAuth } from '../chain/WalletConnectButton'
+import { useAuth } from '../chain/auth-context'
 import ButtonContainer from './ButtonContainer'
 import EntryScreen from './EntryScreen'
 import ShowClown from './ShowClown'
@@ -73,8 +73,14 @@ const ClownPuncher: React.FC = () => {
     }
   }, [robResult])
 
+  useEffect(() => {
+    if (!isAuthenticated && showGame) {
+      setShowGame(false)
+    }
+  }, [isAuthenticated, showGame])
+
   // If not showing the game yet, show entry screen
-  if (!showGame) {
+  if (!showGame || !isAuthenticated) {
     return <EntryScreen onEnter={() => setShowGame(true)} />
   }
 
