@@ -51,7 +51,7 @@ bun install
 cat > .env.local-anvil <<'EOF'
 # frontend
 VITE_CHAIN_ID=31337
-VITE_FAUCET_URL=https://faucet-2.seismicdev.net/
+VITE_FAUCET_URL=https://faucet.seismictest.net/
 VITE_WALLET_PROVIDER=walletconnect
 # Required only when VITE_WALLET_PROVIDER=privy
 # VITE_PRIVY_APP_ID=your-privy-app-id
