@@ -24,7 +24,14 @@ sforge test
 
 ```bash
 source .env
-sforge script script/ClownBeatdown.s.sol:ClownBeatdownScript \
+PRIVKEY="$PRIVKEY" sforge script script/ClownBeatdown.s.sol:ClownBeatdownScript \
       --rpc-url $RPC_URL \
-      --broadcast
+      --broadcast \
+      --skip-simulation
 ```
+
+Note: the `PRIVKEY="$PRIVKEY"` prefix is required because `source .env` sets
+shell variables without exporting them, so `vm.envUint("PRIVKEY")` in the
+deploy script would not see the key otherwise. `--skip-simulation` matches
+the root `contract:deploy` script and avoids known local Foundry simulation
+panics (see the Troubleshooting section in the root README).
