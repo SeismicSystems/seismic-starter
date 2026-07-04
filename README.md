@@ -34,6 +34,7 @@ packages/processes/   # Process orchestration for local dev startup
 ## Prerequisites
 
 - [Bun](https://bun.sh/docs/installation)
+- [jq](https://jqlang.org/download/) (used by the `contract:abi` and `contract:address` scripts)
 - Seismic Foundry toolchain (`sforge`, `sanvil`, `ssolc`)
   - Install via Seismic docs: [seismic-foundry onboarding](https://docs.seismic.systems/onboarding/publish-your-docs)
 
