@@ -52,7 +52,7 @@ export const useContractClient = () => {
 
   /*
     function getClownStamina() external view returns (uint256);
-    function rob() external view returns (bytes32);
+    function rob() external view returns (bytes memory);
     function hit() external;
     function reset() external;
   */
