@@ -13,7 +13,7 @@
       "name": "walnut-cli",
       "dependencies": {
         "dotenv": "^16.4.7",
-        "seismic-client": "git+https://github.com/SeismicSystems/seismic-client.git",
+        "seismic-viem": "1.1.1",
         "viem": "^2.22.3",
       },
       "devDependencies": {
@@ -1528,8 +1528,6 @@
     "secure-json-parse": ["secure-json-parse@2.7.0", "", {}, "sha512-6aU+Rwsezw7VR8/nyvKTx8QpWH9FrcYiXXlqC4z5d5XQBDRqtbfsRjnwGyqbi3gddNtWHuEk9OANUotL26qKUw=="],
 
     "secure-password-utilities": ["secure-password-utilities@0.2.1", "", {}, "sha512-znUg8ae3cpuAaogiFBhP82gD2daVkSz4Qv/L7OWjB7wWvfbCdeqqQuJkm2/IvhKQPOV0T739YPR6rb7vs0uWaw=="],
-
-    "seismic-client": ["seismic-client@github:SeismicSystems/seismic-client#47f16b8", { "dependencies": { "caniuse-lite": "^1.0.30001751" }, "peerDependencies": { "typescript": "^5.7.2" } }, "SeismicSystems-seismic-client-47f16b8", "sha512-RMrfZQ4MVkbTws8GVLNfh/WJ+dCZJsPg+la+sBKEpjpKMCGgkXId8CtnvmX/2O/nnXg9hbYPtAwr1NprpMxnEQ=="],
 
     "seismic-react": ["seismic-react@1.1.1", "", { "peerDependencies": { "@rainbow-me/rainbowkit": "^2.0.0", "react": "^18", "react-dom": "^18", "seismic-viem": ">=1.1.1", "typescript": ">=5.0.4", "viem": "2.x", "wagmi": "^2.0.0" }, "optionalPeers": ["typescript"] }, "sha512-vmz7nUPGburdQ2Q/qF3drLakw0CauNvbigPdYmg/zdU1WXByj/eFPZhbpDLLZYF/lENN4FJYbbnclIOr3oSdPQ=="],
 
