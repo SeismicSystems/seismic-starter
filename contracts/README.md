@@ -24,7 +24,8 @@ sforge test
 
 ```bash
 source .env
-sforge script script/ClownBeatdown.s.sol:ClownBeatdownScript \
+PRIVKEY=${DEPLOYER_PRIVATE_KEY:-$PRIVKEY} sforge script script/ClownBeatdown.s.sol:ClownBeatdownScript \
       --rpc-url $RPC_URL \
-      --broadcast
+      --broadcast \
+      --skip-simulation
 ```
