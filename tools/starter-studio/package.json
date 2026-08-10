@@ -1,0 +1,32 @@
+{
+  "name": "seismic-starter-studio",
+  "version": "1.0.0",
+  "description": "Interactive Shielded dApp Starter Studio & Smart Contract Playground for Seismic Privacy EVM.",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "seismic-starter-cli": "./bin/starter-cli.js"
+  },
+  "scripts": {
+    "start": "node src/server/app.js",
+    "cli": "node bin/starter-cli.js",
+    "test": "node tests/run-all.js"
+  },
+  "keywords": [
+    "seismic",
+    "seismic-starter",
+    "shielded-contracts",
+    "privacy-evm",
+    "suint256",
+    "blind-auction",
+    "tee"
+  ],
+  "author": "Seismic Systems Community",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "express": "^4.21.2"
+  }
+}
