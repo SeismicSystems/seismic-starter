@@ -29,7 +29,7 @@ async function main() {
   )
 
   const chain =
-    process.env.VITE_CHAIN_ID === sanvil.id.toString() ? sanvil : seismicTestnet
+    process.env.CHAIN_ID === sanvil.id.toString() ? sanvil : seismicTestnet
 
   const players = [
     { name: 'Alice', privateKey: process.env.ALICE_PRIVKEY! },
